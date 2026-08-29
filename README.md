@@ -190,8 +190,12 @@ O script:
 
 ## Observações
 
-- O "mapa do Brasil" é uma representação estilizada (bolhas por estado), não um mapa
-  geográfico real — mantém a mesma lógica visual do protótipo original.
+- O "mapa do Brasil" (Overview e Geográfico) usa o contorno real de cada Estado — mapa
+  de [MapSVG](https://mapsvg.com/maps/brazil) via
+  [@svg-maps/brazil](https://github.com/VictorCazanave/svg-maps), licença Creative
+  Commons Attribution 4.0 (CC BY 4.0), colorido por Estado (coroplético) conforme o
+  filtro ativo. Não há traçado de rodovias federais nos dados coletados, por isso essa
+  camada continua desabilitada.
 - Todas as abas estão funcionais agora:
   - **Análises**: causas do acidente, gravidade, condição meteorológica, evolução
     mensal de óbitos/feridos graves — dados reais.
