@@ -1086,10 +1086,26 @@ PERIODO_SELECT_IDS.forEach(id=>{
 function renderChartEvolucao(){
   const uf = document.getElementById('selectEvolucaoEstado')?.value || '';
   const base = filtraPorPeriodo(uf ? DATA.acidentes_mensal_estado.filter(x=>x.uf===uf) : DATA.acidentes_mensal, 'mes');
+  const valores = base.map(x=>x.acidentes||0);
+  // Eixo Y recortado perto da faixa real dos dados: com a variação real (± alguns %),
+  // ir de 0 até o maior valor "arredondado" achata a linha lá em cima e esconde as
+  // altas/baixas mês a mês.
+  const minValor = valores.length ? Math.min(...valores) : 0;
+  const maxValor = valores.length ? Math.max(...valores) : 1;
+  const folga = Math.max(Math.round((maxValor-minValor)*0.15), 1);
   upsertChart('chartEvolucao', 'line', {
     labels: base.map(x=>x.mes),
-    datasets:[{label:'Acidentes', data:base.map(x=>x.acidentes), borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
-  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+    datasets:[{label:'Acidentes', data:valores, borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointHoverRadius:6, pointBackgroundColor:'#2f6fed'}]
+  }, {
+    plugins:{
+      legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}},
+      tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed.y)} acidentes`}}
+    },
+    scales:{
+      x:{ticks:{autoSkip:true, maxRotation:0, maxTicksLimit:9}},
+      y:{min: Math.max(minValor-folga, 0), max: maxValor+folga, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}
+    }
+  });
 }
 
 function fillRanking(id, list, popByUf, limit){
