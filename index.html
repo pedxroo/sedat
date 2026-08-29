@@ -287,7 +287,7 @@
           <p>Monitoramento de acidentes e previsão de demanda de recursos do SUS</p>
         </div>
         <div class="topbar-actions">
-          <div class="pill" title="Só há um período carregado nos dados atuais.">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Filtra o gráfico de Evolução dos Acidentes e o ranking/mapa por Estado.">📅 <div>Período<br><select class="periodo-select" id="selectPeriodoOverview"></select></div></div>
           <div class="pill" title="Painel de filtros avançados não implementado nesta versão." style="opacity:.6;cursor:default;">🔍 Filtros</div>
           <div class="icon-btn" id="btnHelp" title="Ajuda">?</div>
           <div class="icon-btn" title="Notificações — não implementado nesta versão" style="opacity:.5;cursor:default;">🔔</div>
@@ -387,7 +387,7 @@
         </div>
         <div class="topbar-actions">
           <div class="pill">📍 <div>Estado<br><select id="selectPrevisaoEstado"><option value="">Todos (nacional)</option></select></div></div>
-          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Recorta a parte real (histórica) do gráfico Real vs. Previsto. A previsão dos próximos 6 meses não muda.">📅 <div>Período<br><select class="periodo-select" id="selectPeriodoPrevisoes"></select></div></div>
           <div class="pill">🗂️ <div>Tipo de Recurso<br><select><option>Todos</option><option>Leitos</option><option>Acidentes</option></select></div></div>
           <div class="icon-btn admin-only" id="btnReloadPrevisoes" title="Recarregar dados de /dados">⟳</div>
         </div>
@@ -471,7 +471,7 @@
           <p>Visualização espacial dos acidentes de trânsito</p>
         </div>
         <div class="topbar-actions">
-          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Recalcula o ranking e o mapa por Estado somando só os meses do período escolhido. Top Municípios e Rodovias não têm dado mensal, então não mudam.">📅 <div>Período<br><select class="periodo-select" id="selectPeriodoGeo"></select></div></div>
           <div class="pill">📍 <div>Estado<br><select id="selectGeoEstado"><option value="">Todos</option></select></div></div>
           <div class="pill">🏙️ <div>Município<br><select id="selectGeoMunicipio"><option value="">Todos</option></select></div></div>
           <div class="pill">🚗 <div>Tipo de Acidente<br><select id="selectGeoTipo"><option value="">Todos</option></select></div></div>
@@ -552,7 +552,7 @@
           <p>Causas, condições e severidade dos acidentes registrados pela PRF</p>
         </div>
         <div class="topbar-actions">
-          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Filtra o gráfico de Evolução Mensal de Mortos e Feridos Graves. Os cartões de Causas/Gravidade/Clima não têm dado mensal, então não mudam.">📅 <div>Período<br><select class="periodo-select" id="selectPeriodoAnalises"></select></div></div>
           <div class="icon-btn admin-only" id="btnReloadAnalises" title="Recarregar dados de /dados">⟳</div>
         </div>
       </div>
@@ -614,7 +614,7 @@
           <p>Demanda estimada de leitos e atendimentos gerada por acidentes de trânsito</p>
         </div>
         <div class="topbar-actions">
-          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Recalcula o ranking, o gráfico e os totais de leitos/atendimentos/óbitos somando só os meses do período escolhido.">📅 <div>Período<br><select class="periodo-select" id="selectPeriodoRecursos"></select></div></div>
           <div class="icon-btn admin-only" id="btnReloadRecursos" title="Recarregar dados de /dados">⟳</div>
         </div>
       </div>
@@ -994,6 +994,104 @@ Chart.defaults.color = '#5c6478';
 
 function fmt(n){ return (n===null||n===undefined||isNaN(n)) ? '—' : Math.round(n).toLocaleString('pt-BR'); }
 
+/* =========================================================================
+   FILTRO DE PERÍODO — compartilhado pelos 5 seletores "📅 Período".
+   Recorta séries mensais (uma linha por mês) e refaz somas por Estado a
+   partir dos datasets com granularidade mensal já existentes. Cartões que só
+   têm um total fixo (sem coluna de mês) continuam mostrando o período
+   completo, porque não há como recalculá-los por mês.
+   ========================================================================= */
+const PERIODO_SELECT_IDS = ['selectPeriodoOverview','selectPeriodoPrevisoes','selectPeriodoGeo','selectPeriodoAnalises','selectPeriodoRecursos'];
+const MES_ABREV_PT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+let periodoFiltro = '';
+
+function parseMesKey(label){
+  const m = String(label||'').trim().toLowerCase().match(/^([a-z]{3})\/(\d{2,4})$/);
+  if(!m) return null;
+  const idx = MES_ABREV_PT.indexOf(m[1]);
+  if(idx === -1) return null;
+  let ano = parseInt(m[2],10); if(ano < 100) ano += 2000;
+  return ano*12 + idx;
+}
+function getMesesDisponiveis(){
+  return [...new Set((DATA.acidentes_mensal||[]).map(x=>x.mes))]
+    .map(mes=>({mes, key:parseMesKey(mes)}))
+    .filter(m=>m.key!==null)
+    .sort((a,b)=>a.key-b.key);
+}
+function getPeriodoRange(){
+  const meses = getMesesDisponiveis();
+  if(!meses.length) return null;
+  const val = periodoFiltro;
+  if(val === 'ult3' && meses.length > 3) return {min:meses[meses.length-3].key, max:meses[meses.length-1].key};
+  if(val === 'ult6' && meses.length > 6) return {min:meses[meses.length-6].key, max:meses[meses.length-1].key};
+  if(val && val.startsWith('ano-')){
+    const ano = parseInt(val.slice(4),10);
+    return {min:ano*12, max:ano*12+11};
+  }
+  return {min:meses[0].key, max:meses[meses.length-1].key};
+}
+function filtraPorPeriodo(lista, campoMes){
+  const range = getPeriodoRange();
+  if(!range) return lista;
+  return (lista||[]).filter(item=>{
+    const k = parseMesKey(item[campoMes]);
+    return k===null ? true : (k>=range.min && k<=range.max);
+  });
+}
+// Só usado no gráfico Real vs. Previsto: linhas de previsão pura (mês futuro,
+// sem valor "real") ficam sempre visíveis — o período filtra a parte histórica.
+function filtraPrevisaoReal(lista){
+  const range = getPeriodoRange();
+  if(!range) return lista;
+  return (lista||[]).filter(row=>{
+    const temPrevisto = row.previsto !== null && row.previsto !== undefined && row.previsto !== '';
+    const temReal = row.real !== null && row.real !== undefined && row.real !== '';
+    if(temPrevisto && !temReal) return true;
+    const k = parseMesKey(row.mes);
+    return k===null ? true : (k>=range.min && k<=range.max);
+  });
+}
+function somaPorUf(lista, campos){
+  const porUf = {};
+  (lista||[]).forEach(row=>{
+    if(!porUf[row.uf]) porUf[row.uf] = {uf: row.uf};
+    campos.forEach(c=>{ porUf[row.uf][c] = (porUf[row.uf][c]||0) + (row[c]||0); });
+  });
+  return Object.values(porUf);
+}
+function updatePeriodoSelects(){
+  const meses = getMesesDisponiveis();
+  let html = `<option value="">Completo${meses.length ? ` (${meses[0].mes} - ${meses[meses.length-1].mes})` : ''}</option>`;
+  if(meses.length > 3) html += `<option value="ult3">Últimos 3 meses</option>`;
+  if(meses.length > 6) html += `<option value="ult6">Últimos 6 meses</option>`;
+  [...new Set(meses.map(m=>Math.floor(m.key/12)))].sort((a,b)=>a-b).forEach(ano=>{
+    html += `<option value="ano-${ano}">${ano}</option>`;
+  });
+  PERIODO_SELECT_IDS.forEach(id=>{
+    const sel = document.getElementById(id);
+    if(!sel) return;
+    if(sel.dataset.optsHtml !== html){ sel.innerHTML = html; sel.dataset.optsHtml = html; }
+    sel.value = periodoFiltro;
+  });
+}
+PERIODO_SELECT_IDS.forEach(id=>{
+  document.getElementById(id)?.addEventListener('change', (ev)=>{
+    periodoFiltro = ev.target.value;
+    renderAll();
+  });
+});
+
+/* ---------- Evolução dos Acidentes (Overview) — respeita Estado + Período ---------- */
+function renderChartEvolucao(){
+  const uf = document.getElementById('selectEvolucaoEstado')?.value || '';
+  const base = filtraPorPeriodo(uf ? DATA.acidentes_mensal_estado.filter(x=>x.uf===uf) : DATA.acidentes_mensal, 'mes');
+  upsertChart('chartEvolucao', 'line', {
+    labels: base.map(x=>x.mes),
+    datasets:[{label:'Acidentes', data:base.map(x=>x.acidentes), borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
+  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+}
+
 function fillRanking(id, list, popByUf, limit){
   const tbody = document.getElementById(id);
   const max = Math.max(...list.map(e=>e.acidentes||0), 1);
@@ -1032,7 +1130,12 @@ function renderAll(){
   // (respeita o filtro de Estado — nacional ou por UF — chamado no fim de renderAll())
 
   // Rankings (Overview usa os 10 primeiros; Geográfico usa a mesma base ordenada)
-  const estadosOrdenados = [...d.acidentes_estado].sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
+  // Recalculado a partir da série mensal por Estado, recortada pelo período escolhido
+  // (com o período "Completo" isso bate exatamente com os totais de acidentes_estado.csv)
+  updatePeriodoSelects();
+  const acidentesPorUfPeriodo = somaPorUf(filtraPorPeriodo(d.acidentes_mensal_estado, 'mes'), ['acidentes']);
+  const estadosOrdenados = (acidentesPorUfPeriodo.length >= d.acidentes_estado.length ? acidentesPorUfPeriodo : [...d.acidentes_estado])
+    .sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
   const popByUf = {};
   (d.populacao_uf||[]).forEach(p=>{ popByUf[p.uf] = p.populacao; });
   lastEstadosOrdenados = estadosOrdenados; lastPopByUf = popByUf;
@@ -1087,10 +1190,7 @@ function renderAll(){
   }).join('');
 
   // ---- Gráficos ----
-  upsertChart('chartEvolucao', 'line', {
-    labels: d.acidentes_mensal.map(x=>x.mes),
-    datasets:[{label:'Acidentes', data:d.acidentes_mensal.map(x=>x.acidentes), borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
-  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+  renderChartEvolucao();
 
   upsertChart('chartTipos', 'doughnut', {
     labels: d.tipos_acidente.map(x=>x.tipo),
@@ -1158,9 +1258,13 @@ function renderAll(){
   }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v+'%'}}, x:{ticks:{font:{size:9.5}}}}});
 
   // ---- Aba Recursos ----
-  const recOrdenado = [...d.recursos_estado].sort((a,b)=>(b.leitos_estim||0)-(a.leitos_estim||0));
-  setText('kpiRecLeitosV', fmt(d.recursos_estado.reduce((s,r)=>s+(r.leitos_estim||0),0)));
-  setText('kpiRecAtendV', fmt(d.recursos_estado.reduce((s,r)=>s+(r.atendimentos_estim||0),0)));
+  // Recalculado a partir da série mensal por Estado, recortada pelo período escolhido
+  // (com o período "Completo" isso bate exatamente com os totais de recursos_estado.csv)
+  const recursosPorUfPeriodo = somaPorUf(filtraPorPeriodo(d.serie_mensal_estado, 'mes'), ['leitos_estim','atendimentos_estim','obitos']);
+  const recBase = recursosPorUfPeriodo.length >= d.recursos_estado.length ? recursosPorUfPeriodo : d.recursos_estado;
+  const recOrdenado = [...recBase].sort((a,b)=>(b.leitos_estim||0)-(a.leitos_estim||0));
+  setText('kpiRecLeitosV', fmt(recBase.reduce((s,r)=>s+(r.leitos_estim||0),0)));
+  setText('kpiRecAtendV', fmt(recBase.reduce((s,r)=>s+(r.atendimentos_estim||0),0)));
   if(recOrdenado.length) setText('kpiRecTopV', recOrdenado[0].uf);
   const recPerCapita = recOrdenado.map(r=>{
     const pop = popByUf[r.uf];
@@ -1184,11 +1288,12 @@ function renderAll(){
     </td><td style="text-align:right;">${taxa}</td></tr>`;
   }).join('');
 
+  const mortosFeridosPeriodo = filtraPorPeriodo(d.mortos_feridos_mensal, 'mes');
   upsertChart('chartMortosFeridos', 'line', {
-    labels: d.mortos_feridos_mensal.map(x=>x.mes),
+    labels: mortosFeridosPeriodo.map(x=>x.mes),
     datasets:[
-      {label:'Óbitos', data:d.mortos_feridos_mensal.map(x=>x.mortos), borderColor:'#e0483c', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y'},
-      {label:'Feridos Graves', data:d.mortos_feridos_mensal.map(x=>x.feridos_graves), borderColor:'#f5a623', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y1'},
+      {label:'Óbitos', data:mortosFeridosPeriodo.map(x=>x.mortos), borderColor:'#e0483c', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y'},
+      {label:'Feridos Graves', data:mortosFeridosPeriodo.map(x=>x.feridos_graves), borderColor:'#f5a623', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y1'},
     ]
   }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}},
       scales:{y:{position:'left', beginAtZero:true, title:{display:true,text:'Óbitos',font:{size:10}}}, y1:{position:'right', beginAtZero:true, grid:{drawOnChartArea:false}, title:{display:true,text:'Feridos graves',font:{size:10}}}}});
@@ -1196,7 +1301,7 @@ function renderAll(){
   renderBrMap('brMapOverview', estadosOrdenados);
   const geoLayerChecked = document.querySelector('input[name="mapLayer"]:checked');
   if(geoLayerChecked && geoLayerChecked.value === 'obitos'){
-    const obitosPorUf = (d.recursos_estado||[]).map(r=>({uf:r.uf, obitos:r.obitos})).sort((a,b)=>(b.obitos||0)-(a.obitos||0));
+    const obitosPorUf = [...recBase].map(r=>({uf:r.uf, obitos:r.obitos})).sort((a,b)=>(b.obitos||0)-(a.obitos||0));
     renderBrMap('brMapGeo', obitosPorUf, 'obitos');
   } else {
     renderBrMap('brMapGeo', estadosOrdenados, 'acidentes');
@@ -1224,11 +1329,6 @@ function renderAll(){
   document.querySelectorAll('.data-updated-note').forEach(el=>{
     el.textContent = `Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até ${ultimoMes}`;
   });
-  const primeiroMes = d.acidentes_mensal.length ? d.acidentes_mensal[0].mes : '—';
-  document.querySelectorAll('.periodo-label').forEach(el=>{
-    el.textContent = `${primeiroMes} - ${ultimoMes}`;
-  });
-
   applyPrevisoesFiltro();
   renderSelectIaInsights();
   renderExportButtons();
@@ -1446,21 +1546,7 @@ document.getElementById('btnMapZoomOut')?.addEventListener('click', ()=>{
 });
 
 /* ---------- Filtro de Estado: Evolução dos Acidentes (Overview) ---------- */
-document.getElementById('selectEvolucaoEstado')?.addEventListener('change', (ev)=>{
-  const uf = ev.target.value;
-  let labels, valores;
-  if(!uf){
-    labels = DATA.acidentes_mensal.map(x=>x.mes);
-    valores = DATA.acidentes_mensal.map(x=>x.acidentes);
-  } else {
-    const serieUf = DATA.acidentes_mensal_estado.filter(x=>x.uf===uf);
-    labels = serieUf.map(x=>x.mes);
-    valores = serieUf.map(x=>x.acidentes);
-  }
-  upsertChart('chartEvolucao', 'line', {
-    labels, datasets:[{label:'Acidentes', data:valores, borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
-  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
-});
+document.getElementById('selectEvolucaoEstado')?.addEventListener('change', renderChartEvolucao);
 
 /* ---------- Filtros da aba Geográfico: Estado / Tipo de Acidente / Município ---------- */
 function updateRankingGeo(){
@@ -1513,11 +1599,12 @@ function applyPrevisoesFiltro(){
   if(!uf){
     const kpiPrevMapNac = {'Leitos':'kpiPrevLeitos','Acidentes':'kpiPrevAmb','Atendimentos':'kpiPrevAtend','Óbitos':'kpiPrevObitos'};
     (DATA.kpis_previsao||[]).forEach(k=>{ const p = kpiPrevMapNac[k.indicador]; if(p) fillKpi(p, k.indicador, k.valor, k.variacao, 'up'); });
+    const previsaoMensalPeriodo = filtraPrevisaoReal(DATA.previsao_mensal);
     upsertChart('chartPrevisao', 'line', {
-      labels: DATA.previsao_mensal.map(x=>x.mes),
+      labels: previsaoMensalPeriodo.map(x=>x.mes),
       datasets:[
-        {label:'Real', data:DATA.previsao_mensal.map(x=>x.real), borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
-        {label:'Previsto', data:DATA.previsao_mensal.map(x=>x.previsto), borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
+        {label:'Real', data:previsaoMensalPeriodo.map(x=>x.real), borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
+        {label:'Previsto', data:previsaoMensalPeriodo.map(x=>x.previsto), borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
       ]
     }, {plugins:{legend:{position:'top', align:'start'}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
     upsertChart('chartPrevMes', 'bar', {
@@ -1541,11 +1628,12 @@ function applyPrevisoesFiltro(){
 
   const realUf = (DATA.serie_mensal_estado||[]).filter(s=>s.uf===uf);
   const prevUf = (DATA.previsao_mensal_estado||[]).filter(s=>s.uf===uf);
+  const realUfPeriodo = filtraPorPeriodo(realUf, 'mes');
   upsertChart('chartPrevisao', 'line', {
-    labels: [...realUf.map(x=>x.mes), ...prevUf.map(x=>x.mes)],
+    labels: [...realUfPeriodo.map(x=>x.mes), ...prevUf.map(x=>x.mes)],
     datasets:[
-      {label:'Real', data:[...realUf.map(x=>x.acidentes), ...prevUf.map(()=>null)], borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
-      {label:'Previsto', data:[...realUf.map(()=>null), ...prevUf.map(x=>x.previsto_acidentes)], borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
+      {label:'Real', data:[...realUfPeriodo.map(x=>x.acidentes), ...prevUf.map(()=>null)], borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
+      {label:'Previsto', data:[...realUfPeriodo.map(()=>null), ...prevUf.map(x=>x.previsto_acidentes)], borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
     ]
   }, {plugins:{legend:{position:'top', align:'start'}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
 
