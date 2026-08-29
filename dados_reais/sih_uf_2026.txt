@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="pt-BR"><HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<TITLE>TabNet Win32 3.3:  Procedimentos hospitalares do SUS - por local de interna&ccedil;&atilde;o - Brasil</TITLE>
+<LINK REL="stylesheet" HREF="/TABNET/tabnet2.css" TYPE="text/css"><!-- com a opção JCSS -->
+<LINK REL="stylesheet" HREF="/tabnet/tabnetp2.css" MEDIA="print"  TYPE="text/css"><!-- com a opção JCSSP -->
+</HEAD>
+<BODY>
+ <div name="governo" class="todalargura">
+ <div class="testeira" cellspacing="0" cellpadding="0">
+   <div class="Escondido" style="background-color: #ffcc00;">
+      <div>
+         <a href="http://www.saude.gov.br" target="_blank">
+            <img alt="Ministério da Saúde" src="/cgi/imagem/principal_r1_c1_res.gif" height="21" id="img1" />
+         </a>
+     </div>
+ </div>
+ <div class="testeira" cellspacing="0" cellpadding="0">
+    <div class="info_saude">
+         <a href="/tabnet/tabnet.htm" alt="Informações de Saúde" title="Informações de Saúde">Informa&ccedil;&otilde;es de Sa&uacute;de</a>
+   </div>
+      <div class="marca_tabnet">
+       <p>DATASUS<span>&nbsp;&nbsp;Tecnologia da Informa&ccedil;&atilde;o a Servi&ccedil;o do SUS<a href="http://www.datasus.gov.br" alt="MS/SE/Datasus" title="MS/SE/Datasus"></a></span></p>
+   </div>
+        <div class="ajuda">
+          <a href="/tabnet/tabdescr.htm">Ajuda</a>
+      </div>
+           <div class="notific">
+        <a href="sih/Proced_hosp_loc_int_2008.pdf">Notas T&eacute;cnicas</a></p>
+   </div>       <div class="datasus">
+       <p>DATASUS</p>
+   </div>
+   </div>
+<H1 CLASS="Nivel0"> Procedimentos hospitalares do SUS - por local de interna&ccedil;&atilde;o - Brasil</H1>
+<b>Interna&ccedil;&otilde;es segundo Unidade da Federa&ccedil;&atilde;o</b><br>
+<b>Per&iacute;odo:</b> Jan-Mai/2026<PRE>
+"Unidade da Federa&ccedil;&atilde;o";"Interna&ccedil;&otilde;es"
+"11 Rond&ocirc;nia";58947
+"12 Acre";24620
+"13 Amazonas";111529
+"14 Roraima";12005
+"15 Par&aacute;";240820
+"16 Amap&aacute;";26410
+"17 Tocantins";46854
+"21 Maranh&atilde;o";198897
+"22 Piau&iacute;";91877
+"23 Cear&aacute;";249984
+"24 Rio Grande do Norte";89563
+"25 Para&iacute;ba";105868
+"26 Pernambuco";276107
+"27 Alagoas";74320
+"28 Sergipe";53414
+"29 Bahia";402975
+"31 Minas Gerais";665007
+"32 Esp&iacute;rito Santo";128242
+"33 Rio de Janeiro";383083
+"35 S&atilde;o Paulo";1210128
+"41 Paran&aacute;";456440
+"42 Santa Catarina";286189
+"43 Rio Grande do Sul";359789
+"50 Mato Grosso do Sul";85925
+"51 Mato Grosso";110199
+"52 Goi&aacute;s";188018
+"53 Distrito Federal";99275
+"Total";6036485
+&
+</PRE>
+<div class="rodape_htm">
+ Fonte: Ministério da Saúde - Sistema de Informações Hospitalares do SUS (SIH/SUS)<br><br>
+ Notas:
+ <ol>
+ <li>Dados referentes aos últimos seis meses, sujeitos a  atualização.
+ <li>A partir do processamento de junho de 2012, houve mudança na classificação da natureza e esfera dos estabelecimentos. Com isso, temos que:
+      <ul>
+      <li>Até maio de 2012 estas informações estão disponíveis como "Natureza" e "Esfera Administrativa".
+      <li>De junho de 2012 a outubro de 2015, estão disponíveis tanto como "Natureza" e "Esfera Administrativa", como "Natureza Jurídica" e "Esfera Jurídica".
+      <li>A partir de novembro de 2015, estão disponíveis como "Natureza Jurídica" e "Esfera Jurídica".
+      </ul>
+ </ol>
+</div>
+</TABLE>
+<BR><BR>
+</BODY>
+</HTML>

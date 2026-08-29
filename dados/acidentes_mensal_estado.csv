@@ -1,0 +1,487 @@
+uf,mes,acidentes
+Acre,Jan/25,14
+Acre,Fev/25,22
+Acre,Mar/25,16
+Acre,Abr/25,18
+Acre,Mai/25,25
+Acre,Jun/25,26
+Acre,Jul/25,23
+Acre,Ago/25,23
+Acre,Set/25,35
+Acre,Out/25,19
+Acre,Nov/25,27
+Acre,Dez/25,32
+Acre,Jan/26,20
+Acre,Fev/26,20
+Acre,Mar/26,35
+Acre,Abr/26,19
+Acre,Mai/26,22
+Acre,Jun/26,24
+Alagoas,Jan/25,57
+Alagoas,Fev/25,53
+Alagoas,Mar/25,53
+Alagoas,Abr/25,56
+Alagoas,Mai/25,52
+Alagoas,Jun/25,54
+Alagoas,Jul/25,62
+Alagoas,Ago/25,48
+Alagoas,Set/25,46
+Alagoas,Out/25,50
+Alagoas,Nov/25,51
+Alagoas,Dez/25,47
+Alagoas,Jan/26,55
+Alagoas,Fev/26,47
+Alagoas,Mar/26,53
+Alagoas,Abr/26,48
+Alagoas,Mai/26,49
+Alagoas,Jun/26,44
+Amazonas,Jan/25,11
+Amazonas,Fev/25,8
+Amazonas,Mar/25,13
+Amazonas,Abr/25,12
+Amazonas,Mai/25,13
+Amazonas,Jun/25,9
+Amazonas,Jul/25,16
+Amazonas,Ago/25,6
+Amazonas,Set/25,18
+Amazonas,Out/25,10
+Amazonas,Nov/25,10
+Amazonas,Dez/25,12
+Amazonas,Jan/26,11
+Amazonas,Fev/26,9
+Amazonas,Mar/26,14
+Amazonas,Abr/26,10
+Amazonas,Mai/26,18
+Amazonas,Jun/26,11
+Amapá,Jan/25,8
+Amapá,Fev/25,11
+Amapá,Mar/25,15
+Amapá,Abr/25,10
+Amapá,Mai/25,14
+Amapá,Jun/25,16
+Amapá,Jul/25,11
+Amapá,Ago/25,22
+Amapá,Set/25,16
+Amapá,Out/25,14
+Amapá,Nov/25,17
+Amapá,Dez/25,15
+Amapá,Jan/26,14
+Amapá,Fev/26,12
+Amapá,Mar/26,15
+Amapá,Abr/26,11
+Amapá,Mai/26,9
+Amapá,Jun/26,5
+Bahia,Jan/25,329
+Bahia,Fev/25,277
+Bahia,Mar/25,342
+Bahia,Abr/25,342
+Bahia,Mai/25,370
+Bahia,Jun/25,402
+Bahia,Jul/25,334
+Bahia,Ago/25,352
+Bahia,Set/25,327
+Bahia,Out/25,350
+Bahia,Nov/25,340
+Bahia,Dez/25,343
+Bahia,Jan/26,360
+Bahia,Fev/26,315
+Bahia,Mar/26,357
+Bahia,Abr/26,322
+Bahia,Mai/26,329
+Bahia,Jun/26,302
+Ceará,Jan/25,109
+Ceará,Fev/25,103
+Ceará,Mar/25,112
+Ceará,Abr/25,112
+Ceará,Mai/25,122
+Ceará,Jun/25,147
+Ceará,Jul/25,136
+Ceará,Ago/25,124
+Ceará,Set/25,79
+Ceará,Out/25,81
+Ceará,Nov/25,82
+Ceará,Dez/25,95
+Ceará,Jan/26,78
+Ceará,Fev/26,80
+Ceará,Mar/26,92
+Ceará,Abr/26,93
+Ceará,Mai/26,102
+Ceará,Jun/26,73
+Distrito Federal,Jan/25,67
+Distrito Federal,Fev/25,82
+Distrito Federal,Mar/25,81
+Distrito Federal,Abr/25,86
+Distrito Federal,Mai/25,85
+Distrito Federal,Jun/25,78
+Distrito Federal,Jul/25,90
+Distrito Federal,Ago/25,95
+Distrito Federal,Set/25,90
+Distrito Federal,Out/25,83
+Distrito Federal,Nov/25,91
+Distrito Federal,Dez/25,83
+Distrito Federal,Jan/26,76
+Distrito Federal,Fev/26,67
+Distrito Federal,Mar/26,92
+Distrito Federal,Abr/26,92
+Distrito Federal,Mai/26,89
+Distrito Federal,Jun/26,58
+Espírito Santo,Jan/25,173
+Espírito Santo,Fev/25,209
+Espírito Santo,Mar/25,208
+Espírito Santo,Abr/25,197
+Espírito Santo,Mai/25,250
+Espírito Santo,Jun/25,246
+Espírito Santo,Jul/25,212
+Espírito Santo,Ago/25,234
+Espírito Santo,Set/25,225
+Espírito Santo,Out/25,232
+Espírito Santo,Nov/25,225
+Espírito Santo,Dez/25,231
+Espírito Santo,Jan/26,180
+Espírito Santo,Fev/26,208
+Espírito Santo,Mar/26,192
+Espírito Santo,Abr/26,185
+Espírito Santo,Mai/26,187
+Espírito Santo,Jun/26,119
+Goiás,Jan/25,229
+Goiás,Fev/25,215
+Goiás,Mar/25,286
+Goiás,Abr/25,251
+Goiás,Mai/25,245
+Goiás,Jun/25,270
+Goiás,Jul/25,281
+Goiás,Ago/25,272
+Goiás,Set/25,278
+Goiás,Out/25,277
+Goiás,Nov/25,265
+Goiás,Dez/25,327
+Goiás,Jan/26,269
+Goiás,Fev/26,259
+Goiás,Mar/26,306
+Goiás,Abr/26,272
+Goiás,Mai/26,255
+Goiás,Jun/26,183
+Maranhão,Jan/25,65
+Maranhão,Fev/25,90
+Maranhão,Mar/25,95
+Maranhão,Abr/25,86
+Maranhão,Mai/25,109
+Maranhão,Jun/25,88
+Maranhão,Jul/25,115
+Maranhão,Ago/25,90
+Maranhão,Set/25,116
+Maranhão,Out/25,141
+Maranhão,Nov/25,117
+Maranhão,Dez/25,150
+Maranhão,Jan/26,110
+Maranhão,Fev/26,95
+Maranhão,Mar/26,110
+Maranhão,Abr/26,116
+Maranhão,Mai/26,95
+Maranhão,Jun/26,81
+Minas Gerais,Jan/25,751
+Minas Gerais,Fev/25,639
+Minas Gerais,Mar/25,802
+Minas Gerais,Abr/25,715
+Minas Gerais,Mai/25,742
+Minas Gerais,Jun/25,807
+Minas Gerais,Jul/25,882
+Minas Gerais,Ago/25,847
+Minas Gerais,Set/25,812
+Minas Gerais,Out/25,840
+Minas Gerais,Nov/25,852
+Minas Gerais,Dez/25,881
+Minas Gerais,Jan/26,797
+Minas Gerais,Fev/26,665
+Minas Gerais,Mar/26,807
+Minas Gerais,Abr/26,718
+Minas Gerais,Mai/26,687
+Minas Gerais,Jun/26,587
+Mato Grosso do Sul,Jan/25,123
+Mato Grosso do Sul,Fev/25,108
+Mato Grosso do Sul,Mar/25,149
+Mato Grosso do Sul,Abr/25,149
+Mato Grosso do Sul,Mai/25,129
+Mato Grosso do Sul,Jun/25,137
+Mato Grosso do Sul,Jul/25,144
+Mato Grosso do Sul,Ago/25,152
+Mato Grosso do Sul,Set/25,131
+Mato Grosso do Sul,Out/25,135
+Mato Grosso do Sul,Nov/25,145
+Mato Grosso do Sul,Dez/25,152
+Mato Grosso do Sul,Jan/26,133
+Mato Grosso do Sul,Fev/26,138
+Mato Grosso do Sul,Mar/26,136
+Mato Grosso do Sul,Abr/26,118
+Mato Grosso do Sul,Mai/26,141
+Mato Grosso do Sul,Jun/26,98
+Mato Grosso,Jan/25,209
+Mato Grosso,Fev/25,207
+Mato Grosso,Mar/25,224
+Mato Grosso,Abr/25,208
+Mato Grosso,Mai/25,228
+Mato Grosso,Jun/25,218
+Mato Grosso,Jul/25,229
+Mato Grosso,Ago/25,224
+Mato Grosso,Set/25,202
+Mato Grosso,Out/25,238
+Mato Grosso,Nov/25,228
+Mato Grosso,Dez/25,221
+Mato Grosso,Jan/26,221
+Mato Grosso,Fev/26,230
+Mato Grosso,Mar/26,205
+Mato Grosso,Abr/26,193
+Mato Grosso,Mai/26,193
+Mato Grosso,Jun/26,175
+Pará,Jan/25,66
+Pará,Fev/25,73
+Pará,Mar/25,74
+Pará,Abr/25,92
+Pará,Mai/25,88
+Pará,Jun/25,99
+Pará,Jul/25,96
+Pará,Ago/25,109
+Pará,Set/25,108
+Pará,Out/25,93
+Pará,Nov/25,122
+Pará,Dez/25,97
+Pará,Jan/26,80
+Pará,Fev/26,91
+Pará,Mar/26,93
+Pará,Abr/26,86
+Pará,Mai/26,97
+Pará,Jun/26,65
+Paraíba,Jan/25,198
+Paraíba,Fev/25,153
+Paraíba,Mar/25,156
+Paraíba,Abr/25,183
+Paraíba,Mai/25,170
+Paraíba,Jun/25,172
+Paraíba,Jul/25,150
+Paraíba,Ago/25,174
+Paraíba,Set/25,153
+Paraíba,Out/25,166
+Paraíba,Nov/25,145
+Paraíba,Dez/25,158
+Paraíba,Jan/26,160
+Paraíba,Fev/26,146
+Paraíba,Mar/26,150
+Paraíba,Abr/26,147
+Paraíba,Mai/26,126
+Paraíba,Jun/26,116
+Pernambuco,Jan/25,220
+Pernambuco,Fev/25,214
+Pernambuco,Mar/25,251
+Pernambuco,Abr/25,228
+Pernambuco,Mai/25,248
+Pernambuco,Jun/25,239
+Pernambuco,Jul/25,252
+Pernambuco,Ago/25,265
+Pernambuco,Set/25,237
+Pernambuco,Out/25,251
+Pernambuco,Nov/25,285
+Pernambuco,Dez/25,323
+Pernambuco,Jan/26,278
+Pernambuco,Fev/26,268
+Pernambuco,Mar/26,271
+Pernambuco,Abr/26,268
+Pernambuco,Mai/26,242
+Pernambuco,Jun/26,201
+Piauí,Jan/25,118
+Piauí,Fev/25,87
+Piauí,Mar/25,108
+Piauí,Abr/25,116
+Piauí,Mai/25,106
+Piauí,Jun/25,143
+Piauí,Jul/25,165
+Piauí,Ago/25,125
+Piauí,Set/25,132
+Piauí,Out/25,137
+Piauí,Nov/25,117
+Piauí,Dez/25,136
+Piauí,Jan/26,115
+Piauí,Fev/26,113
+Piauí,Mar/26,116
+Piauí,Abr/26,122
+Piauí,Mai/26,96
+Piauí,Jun/26,86
+Paraná,Jan/25,608
+Paraná,Fev/25,557
+Paraná,Mar/25,616
+Paraná,Abr/25,578
+Paraná,Mai/25,670
+Paraná,Jun/25,610
+Paraná,Jul/25,650
+Paraná,Ago/25,682
+Paraná,Set/25,630
+Paraná,Out/25,668
+Paraná,Nov/25,671
+Paraná,Dez/25,690
+Paraná,Jan/26,606
+Paraná,Fev/26,592
+Paraná,Mar/26,662
+Paraná,Abr/26,703
+Paraná,Mai/26,608
+Paraná,Jun/26,488
+Rio de Janeiro,Jan/25,490
+Rio de Janeiro,Fev/25,502
+Rio de Janeiro,Mar/25,542
+Rio de Janeiro,Abr/25,504
+Rio de Janeiro,Mai/25,507
+Rio de Janeiro,Jun/25,524
+Rio de Janeiro,Jul/25,511
+Rio de Janeiro,Ago/25,501
+Rio de Janeiro,Set/25,561
+Rio de Janeiro,Out/25,548
+Rio de Janeiro,Nov/25,564
+Rio de Janeiro,Dez/25,674
+Rio de Janeiro,Jan/26,493
+Rio de Janeiro,Fev/26,517
+Rio de Janeiro,Mar/26,504
+Rio de Janeiro,Abr/26,586
+Rio de Janeiro,Mai/26,489
+Rio de Janeiro,Jun/26,387
+Rio Grande do Norte,Jan/25,123
+Rio Grande do Norte,Fev/25,117
+Rio Grande do Norte,Mar/25,113
+Rio Grande do Norte,Abr/25,119
+Rio Grande do Norte,Mai/25,145
+Rio Grande do Norte,Jun/25,138
+Rio Grande do Norte,Jul/25,139
+Rio Grande do Norte,Ago/25,155
+Rio Grande do Norte,Set/25,136
+Rio Grande do Norte,Out/25,151
+Rio Grande do Norte,Nov/25,138
+Rio Grande do Norte,Dez/25,174
+Rio Grande do Norte,Jan/26,112
+Rio Grande do Norte,Fev/26,104
+Rio Grande do Norte,Mar/26,120
+Rio Grande do Norte,Abr/26,131
+Rio Grande do Norte,Mai/26,104
+Rio Grande do Norte,Jun/26,89
+Rondônia,Jan/25,96
+Rondônia,Fev/25,101
+Rondônia,Mar/25,110
+Rondônia,Abr/25,126
+Rondônia,Mai/25,137
+Rondônia,Jun/25,123
+Rondônia,Jul/25,118
+Rondônia,Ago/25,126
+Rondônia,Set/25,141
+Rondônia,Out/25,121
+Rondônia,Nov/25,122
+Rondônia,Dez/25,131
+Rondônia,Jan/26,133
+Rondônia,Fev/26,153
+Rondônia,Mar/26,156
+Rondônia,Abr/26,152
+Rondônia,Mai/26,165
+Rondônia,Jun/26,109
+Roraima,Jan/25,10
+Roraima,Fev/25,14
+Roraima,Mar/25,11
+Roraima,Abr/25,10
+Roraima,Mai/25,12
+Roraima,Jun/25,17
+Roraima,Jul/25,13
+Roraima,Ago/25,11
+Roraima,Set/25,13
+Roraima,Out/25,11
+Roraima,Nov/25,15
+Roraima,Dez/25,5
+Roraima,Jan/26,10
+Roraima,Fev/26,10
+Roraima,Mar/26,10
+Roraima,Abr/26,9
+Roraima,Mai/26,7
+Roraima,Jun/26,6
+Rio Grande do Sul,Jan/25,402
+Rio Grande do Sul,Fev/25,393
+Rio Grande do Sul,Mar/25,417
+Rio Grande do Sul,Abr/25,417
+Rio Grande do Sul,Mai/25,422
+Rio Grande do Sul,Jun/25,411
+Rio Grande do Sul,Jul/25,412
+Rio Grande do Sul,Ago/25,411
+Rio Grande do Sul,Set/25,379
+Rio Grande do Sul,Out/25,388
+Rio Grande do Sul,Nov/25,382
+Rio Grande do Sul,Dez/25,465
+Rio Grande do Sul,Jan/26,355
+Rio Grande do Sul,Fev/26,331
+Rio Grande do Sul,Mar/26,398
+Rio Grande do Sul,Abr/26,404
+Rio Grande do Sul,Mai/26,389
+Rio Grande do Sul,Jun/26,303
+Santa Catarina,Jan/25,612
+Santa Catarina,Fev/25,619
+Santa Catarina,Mar/25,669
+Santa Catarina,Abr/25,678
+Santa Catarina,Mai/25,694
+Santa Catarina,Jun/25,641
+Santa Catarina,Jul/25,727
+Santa Catarina,Ago/25,695
+Santa Catarina,Set/25,667
+Santa Catarina,Out/25,711
+Santa Catarina,Nov/25,678
+Santa Catarina,Dez/25,795
+Santa Catarina,Jan/26,706
+Santa Catarina,Fev/26,676
+Santa Catarina,Mar/26,747
+Santa Catarina,Abr/26,724
+Santa Catarina,Mai/26,630
+Santa Catarina,Jun/26,477
+Sergipe,Jan/25,52
+Sergipe,Fev/25,42
+Sergipe,Mar/25,42
+Sergipe,Abr/25,42
+Sergipe,Mai/25,47
+Sergipe,Jun/25,54
+Sergipe,Jul/25,45
+Sergipe,Ago/25,46
+Sergipe,Set/25,42
+Sergipe,Out/25,71
+Sergipe,Nov/25,52
+Sergipe,Dez/25,54
+Sergipe,Jan/26,55
+Sergipe,Fev/26,41
+Sergipe,Mar/26,38
+Sergipe,Abr/26,49
+Sergipe,Mai/26,52
+Sergipe,Jun/26,30
+São Paulo,Jan/25,348
+São Paulo,Fev/25,349
+São Paulo,Mar/25,396
+São Paulo,Abr/25,394
+São Paulo,Mai/25,408
+São Paulo,Jun/25,385
+São Paulo,Jul/25,363
+São Paulo,Ago/25,393
+São Paulo,Set/25,390
+São Paulo,Out/25,419
+São Paulo,Nov/25,421
+São Paulo,Dez/25,417
+São Paulo,Jan/26,330
+São Paulo,Fev/26,354
+São Paulo,Mar/26,391
+São Paulo,Abr/26,343
+São Paulo,Mai/26,358
+São Paulo,Jun/26,269
+Tocantins,Jan/25,40
+Tocantins,Fev/25,42
+Tocantins,Mar/25,59
+Tocantins,Abr/25,57
+Tocantins,Mai/25,58
+Tocantins,Jun/25,68
+Tocantins,Jul/25,62
+Tocantins,Ago/25,64
+Tocantins,Set/25,53
+Tocantins,Out/25,47
+Tocantins,Nov/25,47
+Tocantins,Dez/25,80
+Tocantins,Jan/26,67
+Tocantins,Fev/26,55
+Tocantins,Mar/26,63
+Tocantins,Abr/26,61
+Tocantins,Mai/26,64
+Tocantins,Jun/26,48

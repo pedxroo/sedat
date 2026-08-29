@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEDAT-SUS | Dashboard Inteligente de Trânsito e Saúde</title>
+<script src="lib/chart.umd.min.js"></script>
+<script src="lib/papaparse.min.js"></script>
+<script src="lib/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --blue-900:#0b2559;
+    --blue-800:#0f2f6e;
+    --blue-700:#14399a;
+    --blue-600:#1e4bc4;
+    --blue-500:#2f6fed;
+    --blue-100:#e8effe;
+    --green-600:#0f9d58;
+    --green-100:#e6f6ee;
+    --amber-600:#f5a623;
+    --amber-100:#fef3e0;
+    --red-600:#e0483c;
+    --red-100:#fde9e7;
+    --purple-600:#7c5ce0;
+    --purple-100:#f0ebfc;
+    --gray-50:#f5f7fb;
+    --gray-100:#eef1f7;
+    --gray-200:#e3e7f0;
+    --gray-400:#9aa4b8;
+    --gray-600:#5c6478;
+    --gray-800:#232a3b;
+    --white:#ffffff;
+    --radius:14px;
+    --shadow:0 2px 10px rgba(20,30,60,.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:var(--gray-50);
+    color:var(--gray-800);
+  }
+  .app{display:flex;min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{
+    width:230px;
+    background:linear-gradient(180deg,var(--blue-900),var(--blue-800));
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    padding:22px 16px;
+    flex-shrink:0;
+  }
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .brand .logo{
+    width:38px;height:38px;border-radius:10px;background:#fff;
+    display:flex;align-items:center;justify-content:center;color:var(--blue-800);font-weight:800;font-size:18px;
+  }
+  .brand .name{font-weight:800;font-size:17px;line-height:1.1;}
+  .brand .sub{font-size:10.5px;opacity:.7;margin-top:16px;margin-bottom:18px;}
+  .nav{display:flex;flex-direction:column;gap:2px;margin-top:6px;flex:1;}
+  .nav button{
+    display:flex;align-items:center;gap:10px;
+    background:transparent;border:none;color:#dbe4fb;
+    padding:10px 12px;border-radius:9px;font-size:14px;text-align:left;cursor:pointer;
+    transition:.15s;
+  }
+  .nav button .ic{width:18px;text-align:center;}
+  .nav button:hover{background:rgba(255,255,255,.08);}
+  .nav button.active{background:#fff;color:var(--blue-800);font-weight:700;}
+  .sidebar-footer{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12);}
+  .sidebar-footer .gov{font-size:22px;font-weight:900;letter-spacing:.5px;background:linear-gradient(90deg,#ffd400,#00923f,#0033a0);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .sidebar-footer .gov-sub{font-size:9px;opacity:.65;letter-spacing:.5px;}
+
+  /* Main */
+  .main{flex:1;padding:22px 26px 40px;max-width:100%;overflow-x:hidden;}
+  .topbar{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    margin-bottom:20px;flex-wrap:wrap;gap:12px;
+  }
+  .topbar h1{margin:0;font-size:22px;color:var(--blue-900);}
+  .topbar p{margin:4px 0 0;color:var(--gray-600);font-size:13px;}
+  .topbar-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .pill{
+    display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--gray-200);
+    border-radius:10px;padding:9px 14px;font-size:13px;color:var(--gray-800);box-shadow:var(--shadow);cursor:pointer;
+  }
+  .pill select{border:none;background:transparent;font-size:13px;font-weight:600;color:var(--gray-800);outline:none;cursor:pointer;}
+  .pill small{display:block;color:var(--gray-400);font-size:10.5px;}
+  .icon-btn{
+    width:38px;height:38px;border-radius:10px;background:#fff;border:1px solid var(--gray-200);
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);cursor:pointer;font-size:15px;
+  }
+
+  /* KPI cards */
+  .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:18px;}
+  .kpi-card{
+    background:#fff;border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .kpi-top{display:flex;align-items:center;gap:10px;}
+  .kpi-ic{
+    width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;
+  }
+  .kpi-label{font-size:12px;color:var(--gray-600);}
+  .kpi-value{font-size:21px;font-weight:800;color:var(--gray-800);}
+  .kpi-delta{font-size:11.5px;font-weight:600;}
+  .kpi-delta.up{color:var(--red-600);}
+  .kpi-delta.down{color:var(--green-600);}
+
+  /* Grid layout */
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+  .grid.thirds{grid-template-columns:1fr 1fr 1fr;}
+  .grid.thirds-wide{grid-template-columns:1.3fr 1fr 1fr;}
+  .grid.four{grid-template-columns:1fr 1fr 1fr 1.1fr;}
+  .card{
+    background:#fff;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;
+  }
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;gap:10px;}
+  .card-head h3{margin:0;font-size:14.5px;color:var(--gray-800);}
+  .card-head p{margin:2px 0 0;font-size:11.5px;color:var(--gray-400);}
+  .card-select{font-size:12px;border:1px solid var(--gray-200);border-radius:8px;padding:5px 8px;color:var(--gray-600);background:#fff;}
+  .card canvas{max-width:100%;}
+  .btn-link{
+    margin-top:12px;width:100%;background:var(--blue-100);color:var(--blue-700);border:none;
+    padding:9px;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;
+  }
+  .btn-link.green{background:var(--green-600);color:#fff;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  table th{text-align:left;color:var(--gray-400);font-weight:600;padding:6px 4px;border-bottom:1px solid var(--gray-100);font-size:11.5px;}
+  table td{padding:7px 4px;border-bottom:1px solid var(--gray-100);}
+  .bar-cell{display:flex;align-items:center;gap:8px;}
+  .bar-track{flex:1;height:7px;background:var(--gray-100);border-radius:5px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--blue-500);border-radius:5px;}
+
+  .insight-card{background:var(--green-100);border:1px solid #cdeedb;}
+  .insight-badge{
+    background:var(--green-600);color:#fff;font-size:9.5px;font-weight:700;
+    padding:2px 8px;border-radius:20px;margin-left:6px;
+  }
+  .insight-item{display:flex;gap:10px;margin-bottom:12px;font-size:12.5px;color:#2c4a3c;line-height:1.4;}
+  .insight-item .dot{width:20px;height:20px;border-radius:50%;background:#fff;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;}
+
+  .footer-note{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:6px;flex-wrap:wrap;gap:6px;}
+
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .filters-bar{display:flex;gap:10px;flex-wrap:wrap;}
+
+  .map-wrap{position:relative;}
+  .brmap{width:100%;height:auto;}
+  .map-zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;}
+  .map-zoom button{width:28px;height:28px;border-radius:8px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-weight:700;box-shadow:var(--shadow);}
+  .legend-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--gray-600);margin-top:10px;}
+  .legend-bar{flex:1;height:8px;border-radius:6px;background:linear-gradient(90deg,#dbe9ff,#1e4bc4,#0b2559);}
+
+  .chk-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--gray-800);padding:6px 0;}
+  .maptype-btn{
+    width:100%;text-align:left;padding:10px 12px;border-radius:9px;border:1px solid var(--gray-200);
+    background:#fff;margin-bottom:8px;font-size:13px;cursor:pointer;font-weight:600;color:var(--gray-800);
+  }
+  .maptype-btn.active{border-color:var(--blue-600);background:var(--blue-100);color:var(--blue-700);}
+
+  .data-panel{background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-top:10px;}
+  .data-panel-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:6px;}
+  .data-status{font-size:10.5px;color:#b9c6ea;margin-bottom:8px;line-height:1.4;}
+  .data-status.ok{color:#8fe0b8;}
+  .data-status.err{color:#f3a9a2;}
+  .data-btn{
+    width:100%;background:#fff;color:var(--blue-800);border:none;border-radius:8px;
+    padding:8px;font-size:11.5px;font-weight:700;cursor:pointer;margin-bottom:6px;
+  }
+  .data-btn.ghost{background:transparent;color:#dbe4fb;border:1px solid rgba(255,255,255,.25);}
+
+  /* Modo admin — controles de atualização de dados ficam ocultos do público */
+  .admin-only{display:none;}
+  body.is-admin .data-btn.admin-only{display:block;}
+  body.is-admin .icon-btn.admin-only{display:flex;}
+  .admin-toggle{
+    background:none;border:none;color:rgba(255,255,255,.4);font-size:10px;
+    cursor:pointer;padding:10px 0 0;text-align:left;text-decoration:underline;width:100%;
+  }
+  .admin-toggle:hover{color:rgba(255,255,255,.75);}
+  .admin-modal-backdrop{
+    display:none;position:fixed;inset:0;background:rgba(11,37,89,.55);
+    align-items:center;justify-content:center;z-index:9999;
+  }
+  .admin-modal-backdrop.show{display:flex;}
+  .admin-modal{background:#fff;border-radius:var(--radius);padding:22px;width:280px;box-shadow:0 10px 40px rgba(0,0,0,.25);}
+  .admin-modal h3{margin:0 0 4px;font-size:15px;color:var(--blue-900);}
+  .admin-modal p{margin:0 0 14px;font-size:12px;color:var(--gray-600);}
+  .admin-modal input{width:100%;padding:9px 10px;border:1px solid var(--gray-200);border-radius:8px;font-size:13px;margin-bottom:8px;}
+  .admin-modal .admin-modal-actions{display:flex;gap:8px;margin-top:4px;}
+  .admin-modal button{flex:1;padding:9px;border-radius:8px;border:none;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .admin-modal .admin-confirm{background:var(--blue-600);color:#fff;}
+  .admin-modal .admin-cancel{background:var(--gray-100);color:var(--gray-800);}
+  .admin-error{color:var(--red-600);font-size:11.5px;margin:-4px 0 8px;display:none;}
+
+  @media(max-width:1200px){
+    .kpi-grid{grid-template-columns:repeat(3,1fr);}
+    .grid, .grid.thirds, .grid.thirds-wide, .grid.four{grid-template-columns:1fr;}
+  }
+  @media(max-width:700px){
+    .sidebar{display:none;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  }
+
+  #relatorioImprimivel{display:none;}
+  .export-csv-btn{background:var(--blue-100);color:var(--blue-700);border:none;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;}
+  @media print{
+    body *{visibility:hidden;}
+    #relatorioImprimivel, #relatorioImprimivel *{visibility:visible;}
+    #relatorioImprimivel{display:block;position:absolute;top:0;left:0;width:100%;padding:20px;}
+    .rel-h1{font-size:20px;color:var(--blue-900);margin:0 0 4px;}
+    .rel-sub{font-size:12px;color:var(--gray-600);margin:0 0 16px;}
+    .rel-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+    .rel-kpi{border:1px solid var(--gray-200);border-radius:8px;padding:10px;}
+    .rel-kpi b{display:block;font-size:16px;}
+    .rel-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:11px;}
+    .rel-table th, .rel-table td{border:1px solid var(--gray-200);padding:5px 7px;text-align:left;}
+    .rel-section-title{font-size:13px;font-weight:700;color:var(--blue-900);margin:16px 0 6px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">+</div>
+      <div>
+        <div class="name">SUS</div>
+      </div>
+    </div>
+    <div class="sub">Sistema Único de Saúde</div>
+    <nav class="nav">
+      <button class="tab-btn active" data-tab="overview"><span class="ic">🏠</span> Overview</button>
+      <button class="tab-btn" data-tab="analises"><span class="ic">📊</span> Análises</button>
+      <button class="tab-btn" data-tab="previsoes"><span class="ic">📈</span> Previsões</button>
+      <button class="tab-btn" data-tab="geografico"><span class="ic">📍</span> Geográfico</button>
+      <button class="tab-btn" data-tab="recursos"><span class="ic">🗂️</span> Recursos</button>
+      <button class="tab-btn" data-tab="selectia"><span class="ic">✨</span> Select IA</button>
+      <button class="tab-btn" data-tab="exportacao"><span class="ic">⬇️</span> Exportação</button>
+    </nav>
+    <div class="data-panel">
+      <div class="data-panel-title">📂 Dados</div>
+      <div id="dataStatus" class="data-status">Exibindo dados de exemplo</div>
+      <button id="btnPickFolder" class="data-btn admin-only">Selecionar pasta de dados</button>
+      <button id="btnReload" class="data-btn ghost admin-only">↻ Recarregar de /dados</button>
+      <input type="file" id="folderPicker" webkitdirectory directory multiple style="display:none;">
+    </div>
+    <div class="sidebar-footer">
+      <div class="gov">BRASIL</div>
+      <div class="gov-sub">GOVERNO FEDERAL · UNIÃO E RECONSTRUÇÃO</div>
+      <button id="btnAdminToggle" class="admin-toggle">Modo admin</button>
+    </div>
+  </aside>
+
+  <!-- MODO ADMIN: modal de senha -->
+  <div id="adminModalBackdrop" class="admin-modal-backdrop">
+    <div class="admin-modal">
+      <h3>Modo admin</h3>
+      <p>Digite a senha para liberar os controles de atualização de dados.</p>
+      <input type="password" id="adminPasswordInput" placeholder="Senha" autocomplete="off">
+      <div class="admin-error" id="adminError">Senha incorreta.</div>
+      <div class="admin-modal-actions">
+        <button class="admin-cancel" id="adminCancelBtn">Cancelar</button>
+        <button class="admin-confirm" id="adminConfirmBtn">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ===================== OVERVIEW ===================== -->
+    <section id="overview" class="tab-panel active">
+      <div class="topbar">
+        <div>
+          <h1>Dashboard Inteligente de Trânsito e Saúde</h1>
+          <p>Monitoramento de acidentes e previsão de demanda de recursos do SUS</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="pill" title="Só há um período carregado nos dados atuais.">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill" title="Painel de filtros avançados não implementado nesta versão." style="opacity:.6;cursor:default;">🔍 Filtros</div>
+          <div class="icon-btn" id="btnHelp" title="Ajuda">?</div>
+          <div class="icon-btn" title="Notificações — não implementado nesta versão" style="opacity:.5;cursor:default;">🔔</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--blue-100);color:var(--blue-600);">🚗</div>
+            <div><div class="kpi-label">Acidentes</div><div class="kpi-value" id="kpiAcidentesV">78.452</div></div></div>
+          <div class="kpi-delta up" id="kpiAcidentesD">▲ 12,4% vs. per. anterior</div>
+        </div>
+        <div class="kpi-card" title="Estimativa a partir de feridos graves em acidentes de trânsito (PRF), não é o número oficial de leitos ocupados do SIH/SUS.">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--green-100);color:var(--green-600);">🛏️</div>
+            <div><div class="kpi-label">Leitos Ocupados (estim.)</div><div class="kpi-value" id="kpiLeitosV">18.742</div></div></div>
+          <div class="kpi-delta down" id="kpiLeitosD">▼ 8,6% vs. per. anterior</div>
+        </div>
+        <div class="kpi-card" title="Acidentes classificados como 'Com Vítimas Feridas' ou 'Com Vítimas Fatais' pela PRF — proxy de acionamento de socorro, não é uma contagem oficial de frota de ambulâncias.">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--amber-100);color:var(--amber-600);">🚑</div>
+            <div><div class="kpi-label">Acidentes c/ Vítimas</div><div class="kpi-value" id="kpiAmbV">1.268</div></div></div>
+          <div class="kpi-delta up" id="kpiAmbD">▲ 5,2% vs. per. anterior</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--purple-100);color:var(--purple-600);">🧑‍⚕️</div>
+            <div><div class="kpi-label">Atendimentos</div><div class="kpi-value" id="kpiAtendV">96.781</div></div></div>
+          <div class="kpi-delta up" id="kpiAtendD">▲ 11,2% vs. per. anterior</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--red-100);color:var(--red-600);">❤️</div>
+            <div><div class="kpi-label">Óbitos</div><div class="kpi-value" id="kpiObitosV">1.243</div></div></div>
+          <div class="kpi-delta up" id="kpiObitosD">▲ 4,6% vs. per. anterior</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Evolução dos Acidentes</h3><p>Série histórica mensal</p></div>
+            <select class="card-select" id="selectEvolucaoEstado"><option value="">Todos os Estados</option></select>
+          </div>
+          <canvas id="chartEvolucao" height="90"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head">
+            <div><h3>Acidentes por Estado</h3><p>Total de acidentes no período</p></div>
+            <select class="card-select"><option>Todos os Estados</option></select>
+          </div>
+          <div class="map-wrap">
+            <svg id="brMapOverview" class="brmap" viewBox="0 0 500 460"></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid thirds-wide">
+        <div class="card">
+          <div class="card-head"><div><h3>Ranking de Estados</h3><p>Top 10 estados com mais acidentes</p></div></div>
+          <table>
+            <thead><tr><th>#</th><th>Estado</th><th style="text-align:right">Acidentes</th></tr></thead>
+            <tbody id="rankingBody"></tbody>
+          </table>
+          <button class="btn-link" id="btnVerTodosEstados">Ver todos os estados (27)</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Tipos de Acidente</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartTipos" height="200"></canvas>
+          <button class="btn-link" disabled title="Não implementado nesta versão" style="opacity:.55;cursor:default;">Ver detalhes</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Acidentes por Faixa Horária</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartFaixaHoraria" height="200"></canvas>
+          <button class="btn-link" disabled title="Não implementado nesta versão" style="opacity:.55;cursor:default;">Ver mais análises</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr;">
+        <div class="card insight-card">
+          <div class="card-head"><div><h3>✨ Insights Select IA <span class="insight-badge">BETA</span></h3></div></div>
+          <div class="insight-item"><div class="dot">⭐</div><div id="insightLeitos">Com base nos dados analisados, identificamos uma tendência na demanda por leitos no próximo semestre.</div></div>
+          <div class="insight-item"><div class="dot">⚙️</div><div id="insightTipo">Analisando os tipos de acidente registrados no período.</div></div>
+          <div class="insight-item"><div class="dot">📍</div><div id="insightMunicipios">Analisando os municípios com maior concentração de acidentes.</div></div>
+          <button class="btn-link green" style="max-width:260px;" data-goto-tab="selectia">Ver mais insights no Select IA →</button>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até —</span>
+        <span>Baseado nos dados carregados de /dados ⟳</span>
+      </div>
+    </section>
+
+    <!-- ===================== PREVISÕES ===================== -->
+    <section id="previsoes" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Previsão de Demanda de Recursos do SUS</h1>
+          <p>Modelos preditivos com base em dados históricos de acidentes de trânsito</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="pill">📍 <div>Estado<br><select id="selectPrevisaoEstado"><option value="">Todos (nacional)</option></select></div></div>
+          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill">🗂️ <div>Tipo de Recurso<br><select><option>Todos</option><option>Leitos</option><option>Acidentes</option></select></div></div>
+          <div class="icon-btn admin-only" id="btnReloadPrevisoes" title="Recarregar dados de /dados">⟳</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--blue-100);color:var(--blue-600);">🛏️</div>
+            <div><div class="kpi-label">Leitos (Prev.)</div><div class="kpi-value" id="kpiPrevLeitosV">22.842</div></div></div>
+          <div class="kpi-delta up" id="kpiPrevLeitosD">▲ 13,5% vs. período atual</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--green-100);color:var(--green-600);">🚗</div>
+            <div><div class="kpi-label">Acidentes (Prev.)</div><div class="kpi-value" id="kpiPrevAmbV">1.542</div></div></div>
+          <div class="kpi-delta up" id="kpiPrevAmbD">▲ 10,8% vs. período atual</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--amber-100);color:var(--amber-600);">🧑‍⚕️</div>
+            <div><div class="kpi-label">Atendimentos (Prev.)</div><div class="kpi-value" id="kpiPrevAtendV">96.781</div></div></div>
+          <div class="kpi-delta up" id="kpiPrevAtendD">▲ 11,2% vs. período atual</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--red-100);color:var(--red-600);">❤️</div>
+            <div><div class="kpi-label">Óbitos (Prev.)</div><div class="kpi-value" id="kpiPrevObitosV">1.243</div></div></div>
+          <div class="kpi-delta up" id="kpiPrevObitosD">▲ 4,6% vs. período atual</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-head"><div><h3>Previsão de Acidentes</h3><p>Modelo de Regressão Linear · Real vs. Previsto</p></div></div>
+          <canvas id="chartPrevisao" height="90"></canvas>
+          <p style="font-size:11.5px;color:var(--gray-600);margin-top:10px;">ℹ️ Regressão linear múltipla (mínimos quadrados) treinada sobre os 17 meses reais de acidentes da PRF (Jan/25-Mai/26), usando como variáveis: tendência temporal (mês), temperatura média e precipitação média. O clima dos meses futuros assume o mesmo padrão sazonal observado em 2025.</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Fatores que mais impactam a demanda</h3><p>Importância das variáveis no modelo</p></div></div>
+          <div id="fatoresList"></div>
+          <div class="card-head" style="margin-top:14px;"><div><h3 style="font-size:13px;">Clima — Temperatura e Precipitação (2025)</h3><p>Variável usada como padrão sazonal no modelo</p></div></div>
+          <canvas id="chartClima" height="110"></canvas>
+          <div class="card insight-card" style="margin-top:auto;padding:12px;">
+            <div style="font-weight:700;font-size:12.5px;color:#2c4a3c;" id="resumoPrevisaoTitle">✅ Resumo da Previsão</div>
+            <div style="font-size:12px;color:#2c4a3c;margin-top:4px;" id="resumoPrevisaoTexto">Há tendência de aumento na demanda de leitos ocupados de 13,5% no próximo semestre.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid thirds-wide">
+        <div class="card">
+          <div class="card-head"><div><h3>Previsão por Mês — Próximo Semestre (Leitos)</h3><p>Valores previstos pelo modelo</p></div></div>
+          <canvas id="chartPrevMes" height="200"></canvas>
+          <button class="btn-link" disabled title="Não implementado nesta versão" style="opacity:.55;cursor:default;">Ver previsão detalhada por recurso →</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Comparação: Real vs Previsto</h3><p>Acumulado do período</p></div></div>
+          <table>
+            <thead><tr><th>Recurso</th><th>Real</th><th>Previsto</th><th>Var.</th></tr></thead>
+            <tbody id="comparacaoBody"></tbody>
+          </table>
+          <p style="font-size:11px;color:var(--gray-400);margin-top:10px;">ℹ️ As previsões podem variar conforme novos dados forem registrados.</p>
+        </div>
+        <div class="card insight-card">
+          <div class="card-head"><div><h3>✨ Select IA <span class="insight-badge">BETA</span></h3></div></div>
+          <div style="font-weight:700;font-size:12.5px;color:#2c4a3c;margin-bottom:4px;">Recomendação inteligente</div>
+          <div style="font-size:12.5px;color:#2c4a3c;line-height:1.4;" id="insightRecomendacao">Com base na análise dos dados e nas previsões geradas, monitoramos a demanda por leitos para o próximo semestre.</div>
+          <button class="btn-link" style="margin-top:14px;" data-goto-tab="exportacao">📄 Gerar relatório completo</button>
+          <div style="margin-top:14px;font-size:12px;font-weight:600;color:#2c4a3c;">Pergunte ao Select IA</div>
+          <input type="text" placeholder="Ex.: Qual estado terá maior demanda de leitos?" style="margin-top:6px;padding:9px 10px;border-radius:9px;border:1px solid var(--gray-200);font-size:12px;">
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até —</span>
+      </div>
+    </section>
+
+    <!-- ===================== GEOGRÁFICO ===================== -->
+    <section id="geografico" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Análise Geográfica</h1>
+          <p>Visualização espacial dos acidentes de trânsito</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="pill">📍 <div>Estado<br><select id="selectGeoEstado"><option value="">Todos</option></select></div></div>
+          <div class="pill">🏙️ <div>Município<br><select id="selectGeoMunicipio"><option value="">Todos</option></select></div></div>
+          <div class="pill">🚗 <div>Tipo de Acidente<br><select id="selectGeoTipo"><option value="">Todos</option></select></div></div>
+          <div class="icon-btn admin-only" id="btnReloadGeo" title="Recarregar dados de /dados">⟳</div>
+        </div>
+      </div>
+
+      <div class="grid thirds-wide">
+        <div class="card">
+          <div class="card-head"><div><h3>Mapa de Calor — Densidade de Acidentes</h3><p>Concentração de acidentes no território brasileiro</p></div></div>
+          <div class="map-wrap">
+            <svg id="brMapGeo" class="brmap" viewBox="0 0 500 460"></svg>
+            <div class="map-zoom"><button id="btnMapZoomIn">+</button><button id="btnMapZoomOut">−</button></div>
+          </div>
+          <div class="legend-row"><span>Baixa concentração</span><div class="legend-bar"></div><span>Alta concentração</span></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Ranking por Estado</h3><p>Total de acidentes e taxa por 100 mil habitantes</p></div></div>
+          <table>
+            <thead><tr><th>#</th><th>Estado</th><th style="text-align:right">Acidentes</th><th style="text-align:right">/100k hab.</th></tr></thead>
+            <tbody id="rankingBodyGeo"></tbody>
+          </table>
+          <button class="btn-link" id="btnVerTodosEstadosGeo">Ver todos os estados (27) →</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>📍 Filtros Geoespaciais</h3></div></div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--gray-600);margin-bottom:4px;">Camadas (escolha uma)</div>
+          <label class="chk-row"><input type="radio" name="mapLayer" value="acidentes" id="layerAcidentes" checked> Densidade de Acidentes</label>
+          <label class="chk-row"><input type="radio" name="mapLayer" value="obitos" id="layerObitos"> Óbitos</label>
+          <label class="chk-row" title="Sem fonte pública de leitos disponíveis por estado nos dados coletados." style="opacity:.5;"><input type="checkbox" disabled> Leitos Disponíveis</label>
+          <label class="chk-row" title="Sem fonte pública de unidades de saúde por estado nos dados coletados." style="opacity:.5;"><input type="checkbox" disabled> Unidades de Saúde</label>
+          <label class="chk-row" title="O mapa é esquemático (bolhas por estado) e não sobrepõe traçado real de rodovias." style="opacity:.5;"><input type="checkbox" disabled> Rodovias Federais</label>
+          <div style="font-size:12.5px;font-weight:700;color:var(--gray-600);margin:14px 0 4px;">Tipo de Mapa</div>
+          <button class="maptype-btn active" id="btnMapaCalor">💧 Mapa de Calor</button>
+          <button class="maptype-btn" id="btnMapaPontos">✨ Mapa de Pontos</button>
+          <div class="card insight-card" style="margin-top:10px;padding:10px;">
+            <div style="font-size:11.5px;color:#2c4a3c;">ℹ️ Use os filtros acima para personalizar a visualização do mapa.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid thirds">
+        <div class="card">
+          <div class="card-head"><div><h3>Top 10 Municípios com Mais Acidentes</h3><p>Total de acidentes no período</p></div></div>
+          <table>
+            <thead><tr><th>#</th><th>Município</th><th>UF</th><th style="text-align:right">Acidentes</th></tr></thead>
+            <tbody id="municipiosBody"></tbody>
+          </table>
+          <button class="btn-link" id="btnVerTodosMunicipios">Ver mais municípios (30) →</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Distribuição por Rodovia Federal</h3><p>Trechos com maior número de acidentes</p></div></div>
+          <table>
+            <thead><tr><th>Rodovia</th><th>Trecho</th><th style="text-align:right">Acid.</th><th>%</th></tr></thead>
+            <tbody id="rodoviasBody"></tbody>
+          </table>
+          <button class="btn-link" id="btnVerTodasRodovias">Ver mais rodovias (20) →</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Acidentes por Dia da Semana</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartDiaSemana" height="130"></canvas>
+          <div class="card-head" style="margin-top:16px;"><div><h3>Distribuição por Horário</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartHorarioGeo" height="130"></canvas>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até —</span>
+      </div>
+    </section>
+
+    <!-- placeholder tabs -->
+    <!-- ===================== ANÁLISES ===================== -->
+    <section id="analises" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Análise de Causas e Gravidade</h1>
+          <p>Causas, condições e severidade dos acidentes registrados pela PRF</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="icon-btn admin-only" id="btnReloadAnalises" title="Recarregar dados de /dados">⟳</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-card" title="Óbitos a cada 100 acidentes registrados.">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--red-100);color:var(--red-600);">💀</div>
+            <div><div class="kpi-label">Taxa de Letalidade</div><div class="kpi-value" id="kpiLetalidadeV">—</div></div></div>
+          <div class="kpi-delta up">óbitos / 100 acidentes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--amber-100);color:var(--amber-600);">⚠️</div>
+            <div><div class="kpi-label">Acidentes Fatais</div><div class="kpi-value" id="kpiPctFataisV">—</div></div></div>
+          <div class="kpi-delta up">% do total de acidentes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--blue-100);color:var(--blue-600);">🧑‍🤝‍🧑</div>
+            <div><div class="kpi-label">Pessoas por Acidente</div><div class="kpi-value" id="kpiMediaPessoasV">—</div></div></div>
+          <div class="kpi-delta up">média envolvidas</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--purple-100);color:var(--purple-600);">🚙</div>
+            <div><div class="kpi-label">Veículos por Acidente</div><div class="kpi-value" id="kpiMediaVeiculosV">—</div></div></div>
+          <div class="kpi-delta up">média envolvidos</div>
+        </div>
+      </div>
+
+      <div class="grid thirds">
+        <div class="card">
+          <div class="card-head"><div><h3>Gravidade dos Acidentes</h3><p>% do total no período</p></div></div>
+          <canvas id="chartGravidade" height="200"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Principais Causas</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartCausas" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Condição Meteorológica</h3><p>% do total de acidentes</p></div></div>
+          <canvas id="chartClimaCond" height="220"></canvas>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr;">
+        <div class="card">
+          <div class="card-head"><div><h3>Evolução Mensal de Mortos e Feridos Graves</h3><p>Série histórica real (Jan/25 – Mai/26)</p></div></div>
+          <canvas id="chartMortosFeridos" height="80"></canvas>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: PRF (dados abertos) · Dados atualizados até —</span>
+      </div>
+    </section>
+    <!-- ===================== RECURSOS ===================== -->
+    <section id="recursos" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Recursos de Saúde por Estado</h1>
+          <p>Demanda estimada de leitos e atendimentos gerada por acidentes de trânsito</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="pill">📅 <div>Período<br><select disabled><option class="periodo-label">Jan/25 - Mai/26</option></select></div></div>
+          <div class="icon-btn admin-only" id="btnReloadRecursos" title="Recarregar dados de /dados">⟳</div>
+        </div>
+      </div>
+
+      <div class="card insight-card" style="margin-bottom:16px;padding:12px 16px;">
+        <div style="font-size:12px;color:#2c4a3c;line-height:1.4;">ℹ️ Não há, nos dados públicos coletados para este projeto, uma fonte de capacidade
+        instalada (leitos/ambulâncias/unidades de saúde) por estado — isso exigiria o CNES
+        (Cadastro Nacional de Estabelecimentos de Saúde) do DATASUS. Os números abaixo são
+        só o lado da <b>demanda</b>: a mesma estimativa usada no resto do dashboard (leitos
+        ≈ feridos graves; atendimentos ≈ feridos leves + graves + óbitos), quebrada por
+        estado.</div>
+      </div>
+
+      <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--green-100);color:var(--green-600);">🛏️</div>
+            <div><div class="kpi-label">Leitos (estim.) — Brasil</div><div class="kpi-value" id="kpiRecLeitosV">—</div></div></div>
+          <div class="kpi-delta up">total no período</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--purple-100);color:var(--purple-600);">🧑‍⚕️</div>
+            <div><div class="kpi-label">Atendimentos (estim.) — Brasil</div><div class="kpi-value" id="kpiRecAtendV">—</div></div></div>
+          <div class="kpi-delta up">total no período</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--blue-100);color:var(--blue-600);">📍</div>
+            <div><div class="kpi-label">Maior Demanda Absoluta</div><div class="kpi-value" id="kpiRecTopV" style="font-size:16px;">—</div></div></div>
+          <div class="kpi-delta up">estado com mais leitos (estim.)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-top"><div class="kpi-ic" style="background:var(--amber-100);color:var(--amber-600);">⚖️</div>
+            <div><div class="kpi-label">Maior Demanda /100k hab.</div><div class="kpi-value" id="kpiRecTopCapitaV" style="font-size:16px;">—</div></div></div>
+          <div class="kpi-delta up">relativizado pela população</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-head"><div><h3>Leitos (estim.) por Estado</h3><p>Top 10 — feridos graves em acidentes de trânsito</p></div></div>
+          <canvas id="chartRecursosLeitos" height="110"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Ranking de Recursos por Estado</h3><p>Estimativas de demanda</p></div></div>
+          <table>
+            <thead><tr><th>#</th><th>Estado</th><th style="text-align:right">Leitos</th><th style="text-align:right">/100k</th></tr></thead>
+            <tbody id="recursosBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: PRF (dados abertos) · Dados atualizados até —</span>
+      </div>
+    </section>
+    <!-- ===================== SELECT IA ===================== -->
+    <section id="selectia" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Select IA <span class="insight-badge" style="background:var(--purple-600);">BETA</span></h1>
+          <p>Leitura automática dos dados carregados — motor de regras sobre os dados, não é um modelo de IA generativa</p>
+        </div>
+      </div>
+
+      <div class="grid thirds" id="selectiaInsights">
+        <!-- preenchido via JS em renderAll() -->
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr;">
+        <div class="card insight-card">
+          <div class="card-head"><div><h3>💬 Pergunte ao Select IA</h3><p>Responde com base nos dados carregados de /dados. Tente: "qual estado tem mais acidentes?", "principal causa dos acidentes", "previsão de leitos", "horário mais perigoso", "município com mais acidentes", "condição climática mais comum".</p></div></div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="selectiaPergunta" placeholder="Ex.: Qual estado tem mais acidentes?" style="flex:1;padding:10px 12px;border-radius:9px;border:1px solid var(--gray-200);font-size:13px;">
+            <button class="btn-link green" id="selectiaBtn" style="width:auto;padding:10px 18px;margin-top:0;">Perguntar</button>
+          </div>
+          <div id="selectiaResposta" style="margin-top:14px;font-size:13px;color:#2c4a3c;line-height:1.5;"></div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até —</span>
+      </div>
+    </section>
+
+    <!-- ===================== EXPORTAÇÃO ===================== -->
+    <section id="exportacao" class="tab-panel">
+      <div class="topbar">
+        <div>
+          <h1>Exportação de Dados</h1>
+          <p>Baixe os dados e o relatório com base no que está carregado agora no dashboard</p>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr;">
+        <div class="card">
+          <div class="card-head"><div><h3>📄 Relatório Resumido</h3><p>Abre a visualização de impressão com os KPIs e rankings principais — use "Salvar como PDF" na caixa de impressão do navegador.</p></div></div>
+          <button class="btn-link green" id="btnExportarRelatorio" style="max-width:280px;">🖨️ Gerar Relatório (Imprimir / PDF)</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>📊 Exportar Dados (CSV)</h3><p>Cada botão baixa o dataset correspondente exatamente como está carregado agora (dados de exemplo, de /dados, ou da pasta selecionada manualmente).</p></div></div>
+          <div id="exportCsvButtons" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+        </div>
+      </div>
+
+      <div class="footer-note">
+        <span class="data-updated-note">Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até —</span>
+      </div>
+    </section>
+
+    <!-- ===================== RELATÓRIO IMPRIMÍVEL (oculto, só aparece em @media print) ===================== -->
+    <section id="relatorioImprimivel"></section>
+
+  </main>
+</div>
+
+<script>
+/* =========================================================================
+   DADOS DE EXEMPLO (usados quando nenhum arquivo é encontrado em /dados)
+   ========================================================================= */
+const DEFAULTS = {
+  acidentes_mensal: [
+    {mes:'Jan/23',acidentes:7000},{mes:'Mar/23',acidentes:9500},{mes:'Mai/23',acidentes:8200},
+    {mes:'Jul/23',acidentes:11000},{mes:'Set/23',acidentes:10200},{mes:'Nov/23',acidentes:13000},
+    {mes:'Jan/24',acidentes:12500},{mes:'Mar/24',acidentes:15800},{mes:'Mai/24',acidentes:16200},
+    {mes:'Jul/24',acidentes:19000},{mes:'Set/24',acidentes:17800},{mes:'Nov/24',acidentes:17500},
+  ],
+  acidentes_estado: [
+    {uf:'São Paulo',acidentes:42781},{uf:'Minas Gerais',acidentes:35642},{uf:'Paraná',acidentes:28193},
+    {uf:'Rio de Janeiro',acidentes:24875},{uf:'Rio Grande do Sul',acidentes:22614},{uf:'Bahia',acidentes:18392},
+    {uf:'Santa Catarina',acidentes:15781},{uf:'Goiás',acidentes:13466},{uf:'Pernambuco',acidentes:12104},
+    {uf:'Ceará',acidentes:9876},
+  ],
+  tipos_acidente: [
+    {tipo:'Colisão',percentual:45.6},{tipo:'Queda',percentual:20.3},{tipo:'Atropelamento',percentual:15.8},
+    {tipo:'Capotamento',percentual:10.7},{tipo:'Outros',percentual:7.6},
+  ],
+  faixa_horaria: [
+    {faixa:'00-03',percentual:6.1},{faixa:'03-06',percentual:4.8},{faixa:'06-09',percentual:8.2},
+    {faixa:'09-12',percentual:13.4},{faixa:'12-15',percentual:18.7},{faixa:'15-18',percentual:19.6},
+    {faixa:'18-21',percentual:18.2},{faixa:'21-24',percentual:11.0},
+  ],
+  dia_semana: [
+    {dia:'Seg',percentual:14.2},{dia:'Ter',percentual:14.8},{dia:'Qua',percentual:15.1},{dia:'Qui',percentual:15.0},
+    {dia:'Sex',percentual:17.3},{dia:'Sáb',percentual:13.2},{dia:'Dom',percentual:10.4},
+  ],
+  municipios: [
+    {municipio:'São Paulo',uf:'SP',acidentes:6512},{municipio:'Campinas',uf:'SP',acidentes:2341},
+    {municipio:'Belo Horizonte',uf:'MG',acidentes:1987},{municipio:'Rio de Janeiro',uf:'RJ',acidentes:1762},
+    {municipio:'Curitiba',uf:'PR',acidentes:1456},{municipio:'Salvador',uf:'BA',acidentes:1233},
+    {municipio:'Fortaleza',uf:'CE',acidentes:1098},{municipio:'Porto Alegre',uf:'RS',acidentes:987},
+    {municipio:'Goiânia',uf:'GO',acidentes:876},{municipio:'Recife',uf:'PE',acidentes:765},
+  ],
+  rodovias: [
+    {rodovia:'BR-116',trecho:'São Paulo - Rio de Janeiro (SP/RJ)',acidentes:3842,percentual:'8,6%'},
+    {rodovia:'BR-101',trecho:'Rio de Janeiro - Vitória (RJ/ES)',acidentes:2987,percentual:'6,7%'},
+    {rodovia:'BR-381',trecho:'Belo Horizonte - Governador Valadares (MG)',acidentes:2456,percentual:'5,5%'},
+    {rodovia:'BR-277',trecho:'Curitiba - Paranaguá (PR)',acidentes:2341,percentual:'5,2%'},
+    {rodovia:'BR-116',trecho:'Curitiba - São Paulo (PR/SP)',acidentes:2124,percentual:'4,8%'},
+    {rodovia:'BR-040',trecho:'Brasília - Juiz de Fora (DF/MG)',acidentes:1876,percentual:'4,2%'},
+    {rodovia:'BR-153',trecho:'Goiânia - Anápolis (GO)',acidentes:1654,percentual:'3,7%'},
+    {rodovia:'BR-290',trecho:'Porto Alegre - Osório (RS)',acidentes:1432,percentual:'3,2%'},
+    {rodovia:'BR-324',trecho:'Salvador - Feira de Santana (BA)',acidentes:1298,percentual:'2,9%'},
+    {rodovia:'BR-362',trecho:'Belo Horizonte - Vitória (MG/ES)',acidentes:1123,percentual:'2,5%'},
+  ],
+  previsao_mensal: [
+    {mes:'Jan/23',real:7000,previsto:null},{mes:'Abr/23',real:10000,previsto:null},{mes:'Jul/23',real:10800,previsto:null},
+    {mes:'Out/23',real:13500,previsto:null},{mes:'Jan/24',real:15200,previsto:null},{mes:'Abr/24',real:20000,previsto:20000},
+    {mes:'Jul/24',real:null,previsto:21500},{mes:'Out/24',real:null,previsto:24000},{mes:'Dez/24',real:null,previsto:23800},
+  ],
+  previsao_semestre: [
+    {mes:'jan/25',previsto:17842},{mes:'fev/25',previsto:18201},{mes:'mar/25',previsto:18965},
+    {mes:'abr/25',previsto:19842},{mes:'mai/25',previsto:20512},{mes:'jun/25',previsto:22842},
+  ],
+  fatores_impacto: [
+    {fator:'Quantidade de Acidentes',importancia:0.42},{fator:'Gravidade Média',importancia:0.24},
+    {fator:'Dia da Semana',importancia:0.14},{fator:'Horário do Acidente',importancia:0.11},
+    {fator:'Clima',importancia:0.06},{fator:'Feriados',importancia:0.03},
+  ],
+  kpis: [
+    {indicador:'Acidentes',valor:78452,variacao:'12,4%',tendencia:'up'},
+    {indicador:'Leitos Ocupados',valor:18742,variacao:'8,6%',tendencia:'down'},
+    {indicador:'Acidentes com Vítimas',valor:1268,variacao:'5,2%',tendencia:'up'},
+    {indicador:'Atendimentos',valor:96781,variacao:'11,2%',tendencia:'up'},
+    {indicador:'Óbitos',valor:1243,variacao:'4,6%',tendencia:'up'},
+  ],
+  kpis_previsao: [
+    {indicador:'Leitos',valor:22842,variacao:'13,5%'},
+    {indicador:'Acidentes',valor:1542,variacao:'10,8%'},
+    {indicador:'Atendimentos',valor:96781,variacao:'11,2%'},
+    {indicador:'Óbitos',valor:1243,variacao:'4,6%'},
+  ],
+  comparacao_real_previsto: [
+    {recurso:'Leitos Ocupados',icone:'🛏️',real:20123,previsto:22842,variacao:'13,5%'},
+    {recurso:'Acidentes',icone:'🚗',real:1392,previsto:1542,variacao:'10,8%'},
+    {recurso:'Atendimentos',icone:'🧑‍⚕️',real:87010,previsto:96781,variacao:'11,2%'},
+    {recurso:'Óbitos',icone:'❤️',real:1188,previsto:1243,variacao:'4,6%'},
+  ],
+  clima_mensal_2025: [
+    {mes:'Jan/25',temperatura_media_c:25.0,precipitacao_media_mm:180.2},{mes:'Fev/25',temperatura_media_c:25.4,precipitacao_media_mm:125.5},
+    {mes:'Mar/25',temperatura_media_c:25.1,precipitacao_media_mm:119.6},{mes:'Abr/25',temperatura_media_c:23.6,precipitacao_media_mm:128.6},
+    {mes:'Mai/25',temperatura_media_c:22.0,precipitacao_media_mm:72.2},{mes:'Jun/25',temperatura_media_c:20.5,precipitacao_media_mm:83.0},
+    {mes:'Jul/25',temperatura_media_c:19.9,precipitacao_media_mm:35.4},{mes:'Ago/25',temperatura_media_c:21.4,precipitacao_media_mm:37.0},
+    {mes:'Set/25',temperatura_media_c:23.4,precipitacao_media_mm:51.1},{mes:'Out/25',temperatura_media_c:23.5,precipitacao_media_mm:76.3},
+    {mes:'Nov/25',temperatura_media_c:23.9,precipitacao_media_mm:101.6},{mes:'Dez/25',temperatura_media_c:25.0,precipitacao_media_mm:156.4},
+  ],
+  populacao_uf: [
+    {uf:'São Paulo',populacao:46081801,ano:2025},{uf:'Minas Gerais',populacao:21393441,ano:2025},
+    {uf:'Rio de Janeiro',populacao:17223547,ano:2025},{uf:'Bahia',populacao:14870907,ano:2025},
+  ],
+  causas_acidente: [
+    {causa:'Ausência de reação do condutor',percentual:15.8},{causa:'Reação tardia ou ineficiente do condutor',percentual:14.9},
+    {causa:'Acessar a via sem observar a presença de outros veículos',percentual:9.8},{causa:'Velocidade Incompatível',percentual:5.6},
+    {causa:'Outras causas',percentual:53.9},
+  ],
+  condicao_metereologica: [
+    {condicao:'Céu Claro',percentual:62.7},{condicao:'Nublado',percentual:16.4},{condicao:'Chuva',percentual:9.6},
+    {condicao:'Sol',percentual:5.6},{condicao:'Garoa/Chuvisco',percentual:3.5},{condicao:'Outras',percentual:2.2},
+  ],
+  gravidade_acidente: [
+    {classificacao:'Com Vítimas Feridas',percentual:77.5},{classificacao:'Sem Vítimas',percentual:15.4},{classificacao:'Com Vítimas Fatais',percentual:7.1},
+  ],
+  mortos_feridos_mensal: [
+    {mes:'Jan/25',mortos:418,feridos_graves:1547,feridos_leves:5368},{mes:'Fev/25',mortos:412,feridos_graves:1374,feridos_leves:4600},
+    {mes:'Mar/25',mortos:462,feridos_graves:1598,feridos_leves:5186},{mes:'Abr/25',mortos:495,feridos_graves:1602,feridos_leves:5076},
+  ],
+  kpis_analises: [
+    {indicador:'Taxa de Letalidade',valor:8.28},{indicador:'Pct Acidentes Fatais',valor:7.1},
+    {indicador:'Media Pessoas por Acidente',valor:2.6},{indicador:'Media Veiculos por Acidente',valor:2.0},
+  ],
+  recursos_estado: [
+    {uf:'Minas Gerais',leitos_estim:4034,atendimentos_estim:17814,obitos:1094},
+    {uf:'Santa Catarina',leitos_estim:3201,atendimentos_estim:14136,obitos:600},
+    {uf:'Paraná',leitos_estim:2674,atendimentos_estim:12958,obitos:819},
+    {uf:'Bahia',leitos_estim:1925,atendimentos_estim:8100,obitos:833},
+  ],
+  acidentes_mensal_estado: [
+    {uf:'São Paulo',mes:'Jan/25',acidentes:420},{uf:'São Paulo',mes:'Fev/25',acidentes:410},
+    {uf:'Minas Gerais',mes:'Jan/25',acidentes:780},{uf:'Minas Gerais',mes:'Fev/25',acidentes:760},
+  ],
+  acidentes_estado_tipo: [
+    {uf:'São Paulo',tipo:'Colisão traseira',acidentes:120},{uf:'Minas Gerais',tipo:'Colisão traseira',acidentes:200},
+  ],
+  municipios_estado: [
+    {uf:'São Paulo',municipio:'São Paulo',acidentes:200},{uf:'Minas Gerais',municipio:'Belo Horizonte',acidentes:150},
+  ],
+  serie_mensal_estado: [
+    {uf:'São Paulo',mes:'Jan/25',acidentes:348,leitos_estim:50,atendimentos_estim:387,obitos:8},
+  ],
+  previsao_mensal_estado: [
+    {uf:'São Paulo',mes:'Jun/26',previsto_acidentes:382,previsto_leitos:63,previsto_atendimentos:420,previsto_obitos:20},
+  ],
+  kpis_previsao_estado: [
+    {uf:'São Paulo',acidentes_valor:2371,acidentes_variacao:'3,0%',leitos_valor:410,leitos_variacao:'8,1%',atendimentos_valor:2650,atendimentos_variacao:'4,2%',obitos_valor:120,obitos_variacao:'5,0%'},
+  ],
+};
+
+const DATASETS = Object.keys(DEFAULTS);
+let DATA = JSON.parse(JSON.stringify(DEFAULTS)); // dataset em uso (começa com o exemplo)
+
+/* =========================================================================
+   CARREGAMENTO DE ARQUIVOS (CSV / XLSX)
+   ========================================================================= */
+function normNum(v){
+  if(typeof v === 'number') return v;
+  if(v===null || v===undefined || v==='') return null;
+  let s = String(v).trim();
+  // só trata '.' como separador de milhar (formato BR "1.234,5") quando também há vírgula;
+  // caso contrário "45.6" (formato EN) é decimal e o ponto deve ser preservado.
+  s = s.includes(',') ? s.replace(/\./g,'').replace(',', '.') : s;
+  const n = parseFloat(s.replace(/[^0-9.\-]/g,''));
+  return isNaN(n) ? null : n;
+}
+function parseCSVText(text){
+  return Papa.parse(text, {header:true, skipEmptyLines:true}).data;
+}
+function parseXLSXBuffer(buf){
+  const wb = XLSX.read(buf, {type:'array'});
+  const sheet = wb.Sheets[wb.SheetNames[0]];
+  return XLSX.utils.sheet_to_json(sheet, {defval:''});
+}
+
+async function tryFetchDataset(name){
+  try{
+    const r = await fetch(`dados/${name}.csv`, {cache:'no-store'});
+    if(r.ok) return parseCSVText(await r.text());
+  }catch(e){}
+  try{
+    const r = await fetch(`dados/${name}.xlsx`, {cache:'no-store'});
+    if(r.ok) return parseXLSXBuffer(await r.arrayBuffer());
+  }catch(e){}
+  return null;
+}
+
+function setStatus(msg, cls){
+  const el = document.getElementById('dataStatus');
+  el.textContent = msg;
+  el.className = 'data-status' + (cls ? ' '+cls : '');
+}
+
+async function autoLoadFromServer(){
+  setStatus('Procurando arquivos em /dados ...');
+  let count = 0;
+  for(const name of DATASETS){
+    const rows = await tryFetchDataset(name);
+    if(rows && rows.length){ DATA[name] = normalizeDataset(name, rows); count++; }
+  }
+  if(count > 0){
+    setStatus(`✅ ${count} arquivo(s) carregado(s) de /dados`, 'ok');
+  }else{
+    setStatus('Exibindo dados de exemplo (nenhum arquivo encontrado em /dados — sirva a pasta com um servidor local, ou use "Selecionar pasta de dados")');
+  }
+  renderAll();
+}
+
+function normalizeDataset(name, rows){
+  // converte campos numéricos conforme o schema de cada dataset
+  const numFields = {
+    acidentes_mensal:['acidentes'], acidentes_estado:['acidentes'], tipos_acidente:['percentual'],
+    faixa_horaria:['percentual'], dia_semana:['percentual'], municipios:['acidentes'],
+    rodovias:['acidentes'], previsao_mensal:['real','previsto'], previsao_semestre:['previsto'],
+    fatores_impacto:['importancia'], kpis:['valor'], kpis_previsao:['valor'],
+    comparacao_real_previsto:['real','previsto'],
+    clima_mensal_2025:['temperatura_media_c','precipitacao_media_mm'],
+    populacao_uf:['populacao','ano'],
+    causas_acidente:['percentual'], condicao_metereologica:['percentual'], gravidade_acidente:['percentual'],
+    mortos_feridos_mensal:['mortos','feridos_graves','feridos_leves'], kpis_analises:['valor'],
+    recursos_estado:['leitos_estim','atendimentos_estim','obitos'],
+    acidentes_mensal_estado:['acidentes'],
+    acidentes_estado_tipo:['acidentes'], municipios_estado:['acidentes'],
+    serie_mensal_estado:['acidentes','leitos_estim','atendimentos_estim','obitos'],
+    previsao_mensal_estado:['previsto_acidentes','previsto_leitos','previsto_atendimentos','previsto_obitos'],
+    kpis_previsao_estado:['acidentes_valor','leitos_valor','atendimentos_valor','obitos_valor'],
+  };
+  const fields = numFields[name] || [];
+  return rows.map(r=>{
+    const out = {...r};
+    fields.forEach(f=>{ if(f in out) out[f] = normNum(out[f]); });
+    return out;
+  }).filter(r => Object.values(r).some(v => v !== '' && v !== null && v !== undefined));
+}
+
+document.getElementById('btnPickFolder').addEventListener('click', ()=>{
+  document.getElementById('folderPicker').click();
+});
+document.getElementById('btnReload').addEventListener('click', ()=>{
+  DATA = JSON.parse(JSON.stringify(DEFAULTS));
+  autoLoadFromServer();
+});
+document.getElementById('folderPicker').addEventListener('change', async (ev)=>{
+  const files = Array.from(ev.target.files);
+  let count = 0;
+  for(const f of files){
+    const m = f.name.match(/^(.+)\.(csv|xlsx)$/i);
+    if(!m) continue;
+    const base = m[1];
+    if(!DATASETS.includes(base)) continue;
+    let rows;
+    if(/\.csv$/i.test(f.name)) rows = parseCSVText(await f.text());
+    else rows = parseXLSXBuffer(await f.arrayBuffer());
+    if(rows && rows.length){ DATA[base] = normalizeDataset(base, rows); count++; }
+  }
+  if(count > 0){
+    setStatus(`✅ ${count} arquivo(s) carregado(s) da pasta selecionada`, 'ok');
+    renderAll();
+  }else{
+    setStatus('⚠️ Nenhum arquivo com nome reconhecido foi encontrado na pasta', 'err');
+  }
+});
+
+/* =========================================================================
+   RENDERIZAÇÃO
+   ========================================================================= */
+let charts = {};
+let showAllEstados = false, showAllEstadosGeo = false, showAllMunicipios = false, showAllRodovias = false;
+let lastEstadosOrdenados = [], lastPopByUf = {};
+Chart.defaults.font.family = "'Segoe UI',Roboto,Arial,sans-serif";
+Chart.defaults.color = '#5c6478';
+
+function fmt(n){ return (n===null||n===undefined||isNaN(n)) ? '—' : Math.round(n).toLocaleString('pt-BR'); }
+
+function fillRanking(id, list, popByUf, limit){
+  const tbody = document.getElementById(id);
+  const max = Math.max(...list.map(e=>e.acidentes||0), 1);
+  tbody.innerHTML = list.slice(0,limit||10).map((e,i)=>{
+    const pct = ((e.acidentes||0)/max*100).toFixed(0);
+    const taxaCell = popByUf ? `<td style="text-align:right;">${(() => {
+      const pop = popByUf[e.uf];
+      return pop ? ((e.acidentes||0)/pop*100000).toFixed(1) : '—';
+    })()}</td>` : '';
+    return `<tr><td>${i+1}</td><td>${e.uf}</td><td>
+      <div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <span style="min-width:52px;text-align:right;display:inline-block;">${fmt(e.acidentes)}</span></div>
+    </td>${taxaCell}</tr>`;
+  }).join('');
+}
+
+function fillKpi(prefix, indicador, valor, variacao, tendencia){
+  const v = document.getElementById(prefix+'V');
+  const d = document.getElementById(prefix+'D');
+  if(v) v.textContent = fmt(valor);
+  if(d){
+    const isDown = tendencia === 'down';
+    d.className = 'kpi-delta ' + (isDown ? 'down' : 'up');
+    d.textContent = `${isDown ? '▼' : '▲'} ${variacao ?? ''}${prefix.startsWith('kpiPrev') ? ' vs. período atual' : ' vs. per. anterior'}`;
+  }
+}
+
+function renderAll(){
+  const d = DATA;
+
+  // KPIs — Overview
+  const kpiMap = {'Acidentes':'kpiAcidentes','Leitos Ocupados':'kpiLeitos','Acidentes com Vítimas':'kpiAmb','Atendimentos':'kpiAtend','Óbitos':'kpiObitos'};
+  d.kpis.forEach(k=>{ const p = kpiMap[k.indicador]; if(p) fillKpi(p, k.indicador, k.valor, k.variacao, k.tendencia); });
+
+  // KPIs, gráficos e tabela da aba Previsões são tratados por applyPrevisoesFiltro()
+  // (respeita o filtro de Estado — nacional ou por UF — chamado no fim de renderAll())
+
+  // Rankings (Overview usa os 10 primeiros; Geográfico usa a mesma base ordenada)
+  const estadosOrdenados = [...d.acidentes_estado].sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
+  const popByUf = {};
+  (d.populacao_uf||[]).forEach(p=>{ popByUf[p.uf] = p.populacao; });
+  lastEstadosOrdenados = estadosOrdenados; lastPopByUf = popByUf;
+  fillRanking('rankingBody', estadosOrdenados, null, showAllEstados ? estadosOrdenados.length : 10);
+  // rankingBodyGeo é preenchido por updateRankingGeo() mais abaixo (considera Estado + Tipo)
+
+  // Popula os selects de Estado com as UFs reais (só refaz se o dataset mudou de tamanho)
+  [['selectEvolucaoEstado', estadosOrdenados.map(e=>e.uf), 'Todos os Estados'],
+   ['selectGeoEstado', estadosOrdenados.map(e=>e.uf), 'Todos'],
+   ['selectPrevisaoEstado', estadosOrdenados.map(e=>e.uf), 'Todos (nacional)']].forEach(([id, ufs, rotuloTodos])=>{
+    const sel = document.getElementById(id);
+    if(sel && sel.options.length - 1 !== ufs.length){
+      const atual = sel.value;
+      sel.innerHTML = `<option value="">${rotuloTodos}</option>` + ufs.map(uf=>`<option value="${uf}">${uf}</option>`).join('');
+      sel.value = ufs.includes(atual) ? atual : '';
+    }
+  });
+
+  // Município: opções do select em cascata (nacional, ou por estado se filtrado)
+  const estadoSelAtual = document.getElementById('selectGeoEstado')?.value || '';
+  const muniSelectEl = document.getElementById('selectGeoMunicipio');
+  if(muniSelectEl){
+    const fonte = estadoSelAtual ? d.municipios_estado.filter(m=>m.uf===estadoSelAtual) : d.municipios;
+    const nomesUnicos = [...new Set(fonte.map(m=>m.municipio))];
+    const atual = muniSelectEl.value;
+    muniSelectEl.innerHTML = `<option value="">Todos</option>` + nomesUnicos.map(n=>`<option value="${n}">${n}</option>`).join('');
+    muniSelectEl.value = nomesUnicos.includes(atual) ? atual : '';
+  }
+  // Tipo de Acidente: opções do select (17 tipos reais)
+  const tipoSelectEl = document.getElementById('selectGeoTipo');
+  if(tipoSelectEl){
+    const tiposUnicos = [...new Set((d.acidentes_estado_tipo||[]).map(t=>t.tipo))].sort();
+    if(tipoSelectEl.options.length - 1 !== tiposUnicos.length){
+      const atualTipo = tipoSelectEl.value;
+      tipoSelectEl.innerHTML = `<option value="">Todos</option>` + tiposUnicos.map(t=>`<option value="${t}">${t}</option>`).join('');
+      tipoSelectEl.value = tiposUnicos.includes(atualTipo) ? atualTipo : '';
+    }
+  }
+
+  updateMunicipiosBody();
+  updateRodoviasBody();
+  updateRankingGeo();
+
+  // Fatores de impacto
+  const maxFator = Math.max(...d.fatores_impacto.map(f=>f.importancia||0), 0.01);
+  document.getElementById('fatoresList').innerHTML = d.fatores_impacto.map(f=>{
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px;">
+      <span style="width:150px;color:var(--gray-600);">${f.fator}</span>
+      <div class="bar-track" style="flex:1;"><div class="bar-fill" style="width:${(f.importancia/maxFator*100)}%"></div></div>
+      <span style="width:34px;text-align:right;font-weight:700;">${(f.importancia??0).toFixed(2)}</span>
+    </div>`;
+  }).join('');
+
+  // ---- Gráficos ----
+  upsertChart('chartEvolucao', 'line', {
+    labels: d.acidentes_mensal.map(x=>x.mes),
+    datasets:[{label:'Acidentes', data:d.acidentes_mensal.map(x=>x.acidentes), borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
+  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+
+  upsertChart('chartTipos', 'doughnut', {
+    labels: d.tipos_acidente.map(x=>x.tipo),
+    datasets:[{data:d.tipos_acidente.map(x=>x.percentual), backgroundColor:['#2f6fed','#0f9d58','#f5a623','#7c5ce0','#e0483c','#9aa4b8']}]
+  }, {cutout:'62%', plugins:{legend:{position:'right', labels:{boxWidth:10, font:{size:11}}}}});
+
+  upsertChart('chartFaixaHoraria', 'bar', {
+    labels: d.faixa_horaria.map(x=>x.faixa),
+    datasets:[{data:d.faixa_horaria.map(x=>x.percentual), backgroundColor:'#0f9d58', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v+'%'}}}});
+
+  // chartPrevisao e chartPrevMes são preenchidos por applyPrevisoesFiltro()
+
+  upsertChart('chartDiaSemana', 'bar', {
+    labels: d.dia_semana.map(x=>x.dia),
+    datasets:[{data:d.dia_semana.map(x=>x.percentual), backgroundColor:'#2f6fed', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v+'%'}}}});
+
+  upsertChart('chartClima', 'line', {
+    labels: d.clima_mensal_2025.map(x=>x.mes),
+    datasets:[
+      {label:'Temp. média (°C)', data:d.clima_mensal_2025.map(x=>x.temperatura_media_c), borderColor:'#f5a623', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y'},
+      {label:'Precipitação (mm)', data:d.clima_mensal_2025.map(x=>x.precipitacao_media_mm), borderColor:'#2f6fed', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y1'},
+    ]
+  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10, font:{size:10}}}},
+      scales:{y:{position:'left', ticks:{callback:v=>v+'°'}}, y1:{position:'right', grid:{drawOnChartArea:false}}}});
+
+  const leitosPrev = (d.kpis_previsao||[]).find(k=>k.indicador==='Leitos');
+  if(leitosPrev){
+    const el = document.getElementById('resumoPrevisaoTexto');
+    if(el) el.textContent = `Há tendência de aumento na demanda de leitos ocupados (estim.) de ${leitosPrev.variacao} no próximo semestre.`;
+    const rec = document.getElementById('insightRecomendacao');
+    if(rec) rec.innerHTML = `Com base na análise dos dados e no modelo de regressão linear, a demanda estimada por leitos ocupados deve variar <b>${leitosPrev.variacao}</b> no próximo semestre em relação aos últimos 6 meses.`;
+  }
+
+  upsertChart('chartHorarioGeo', 'line', {
+    labels: d.faixa_horaria.map(x=>x.faixa),
+    datasets:[{data:d.faixa_horaria.map(x=>x.percentual), borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.12)', fill:true, tension:.4, pointRadius:2}]
+  }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v+'%'}}}});
+
+  // ---- Aba Análises ----
+  const kpiAnalises = {};
+  (d.kpis_analises||[]).forEach(k=>{ kpiAnalises[k.indicador] = k.valor; });
+  const setText = (id, val, suffix) => { const el = document.getElementById(id); if(el) el.textContent = (val===undefined||val===null) ? '—' : `${val}${suffix||''}`; };
+  setText('kpiLetalidadeV', kpiAnalises['Taxa de Letalidade']);
+  setText('kpiPctFataisV', kpiAnalises['Pct Acidentes Fatais'], '%');
+  setText('kpiMediaPessoasV', kpiAnalises['Media Pessoas por Acidente']);
+  setText('kpiMediaVeiculosV', kpiAnalises['Media Veiculos por Acidente']);
+
+  upsertChart('chartGravidade', 'doughnut', {
+    labels: d.gravidade_acidente.map(x=>x.classificacao),
+    datasets:[{data:d.gravidade_acidente.map(x=>x.percentual), backgroundColor:['#f5a623','#0f9d58','#e0483c']}]
+  }, {cutout:'62%', plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:10}}}}});
+
+  const causasOrdenadas = [...d.causas_acidente].sort((a,b)=>(b.percentual||0)-(a.percentual||0));
+  upsertChart('chartCausas', 'bar', {
+    labels: causasOrdenadas.map(x=>x.causa),
+    datasets:[{data:causasOrdenadas.map(x=>x.percentual), backgroundColor:'#2f6fed', borderRadius:5}]
+  }, {indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback:v=>v+'%'}}, y:{ticks:{font:{size:9.5}}}}});
+
+  const climaCondOrdenada = [...d.condicao_metereologica].sort((a,b)=>(b.percentual||0)-(a.percentual||0));
+  upsertChart('chartClimaCond', 'bar', {
+    labels: climaCondOrdenada.map(x=>x.condicao),
+    datasets:[{data:climaCondOrdenada.map(x=>x.percentual), backgroundColor:'#7c5ce0', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v+'%'}}, x:{ticks:{font:{size:9.5}}}}});
+
+  // ---- Aba Recursos ----
+  const recOrdenado = [...d.recursos_estado].sort((a,b)=>(b.leitos_estim||0)-(a.leitos_estim||0));
+  setText('kpiRecLeitosV', fmt(d.recursos_estado.reduce((s,r)=>s+(r.leitos_estim||0),0)));
+  setText('kpiRecAtendV', fmt(d.recursos_estado.reduce((s,r)=>s+(r.atendimentos_estim||0),0)));
+  if(recOrdenado.length) setText('kpiRecTopV', recOrdenado[0].uf);
+  const recPerCapita = recOrdenado.map(r=>{
+    const pop = popByUf[r.uf];
+    return {uf:r.uf, taxa: pop ? (r.leitos_estim||0)/pop*100000 : 0};
+  }).sort((a,b)=>b.taxa-a.taxa);
+  if(recPerCapita.length) setText('kpiRecTopCapitaV', recPerCapita[0].uf);
+
+  upsertChart('chartRecursosLeitos', 'bar', {
+    labels: recOrdenado.slice(0,10).map(x=>x.uf),
+    datasets:[{data:recOrdenado.slice(0,10).map(x=>x.leitos_estim), backgroundColor:'#0f9d58', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{x:{ticks:{font:{size:9.5}}}}});
+
+  const maxRecLeitos = Math.max(...recOrdenado.map(r=>r.leitos_estim||0), 1);
+  document.getElementById('recursosBody').innerHTML = recOrdenado.slice(0,10).map((r,i)=>{
+    const pct = ((r.leitos_estim||0)/maxRecLeitos*100).toFixed(0);
+    const pop = popByUf[r.uf];
+    const taxa = pop ? ((r.leitos_estim||0)/pop*100000).toFixed(1) : '—';
+    return `<tr><td>${i+1}</td><td>${r.uf}</td><td>
+      <div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <span style="min-width:44px;text-align:right;display:inline-block;">${fmt(r.leitos_estim)}</span></div>
+    </td><td style="text-align:right;">${taxa}</td></tr>`;
+  }).join('');
+
+  upsertChart('chartMortosFeridos', 'line', {
+    labels: d.mortos_feridos_mensal.map(x=>x.mes),
+    datasets:[
+      {label:'Óbitos', data:d.mortos_feridos_mensal.map(x=>x.mortos), borderColor:'#e0483c', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y'},
+      {label:'Feridos Graves', data:d.mortos_feridos_mensal.map(x=>x.feridos_graves), borderColor:'#f5a623', backgroundColor:'transparent', tension:.3, pointRadius:2, yAxisID:'y1'},
+    ]
+  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}},
+      scales:{y:{position:'left', beginAtZero:true, title:{display:true,text:'Óbitos',font:{size:10}}}, y1:{position:'right', beginAtZero:true, grid:{drawOnChartArea:false}, title:{display:true,text:'Feridos graves',font:{size:10}}}}});
+
+  renderBrMap('brMapOverview', estadosOrdenados);
+  const geoLayerChecked = document.querySelector('input[name="mapLayer"]:checked');
+  if(geoLayerChecked && geoLayerChecked.value === 'obitos'){
+    const obitosPorUf = (d.recursos_estado||[]).map(r=>({uf:r.uf, obitos:r.obitos})).sort((a,b)=>(b.obitos||0)-(a.obitos||0));
+    renderBrMap('brMapGeo', obitosPorUf, 'obitos');
+  } else {
+    renderBrMap('brMapGeo', estadosOrdenados, 'acidentes');
+  }
+
+  // Insights Select IA (Overview) — derivados dos dados carregados, não mais texto fixo
+  const insLeitos = document.getElementById('insightLeitos');
+  if(insLeitos && leitosPrev){
+    insLeitos.innerHTML = `Com base nos dados analisados, a demanda por leitos ocupados (estimativa) deve variar <b>${leitosPrev.variacao}</b> no próximo semestre.`;
+  }
+  const insTipo = document.getElementById('insightTipo');
+  const faixaTop = [...d.faixa_horaria].sort((a,b)=>(b.percentual||0)-(a.percentual||0))[0];
+  if(insTipo && d.tipos_acidente.length && faixaTop){
+    const tipoTop = [...d.tipos_acidente].filter(t=>t.tipo!=='Outros').sort((a,b)=>(b.percentual||0)-(a.percentual||0))[0];
+    insTipo.innerHTML = `Os acidentes do tipo <b>${tipoTop.tipo}</b> representaram <b>${tipoTop.percentual}%</b> do total, com maior concentração no horário das <b>${faixaTop.faixa.replace('-','h às ')}h</b>.`;
+  }
+  const insMuni = document.getElementById('insightMunicipios');
+  if(insMuni && d.municipios.length){
+    const top3 = [...d.municipios].sort((a,b)=>(b.acidentes||0)-(a.acidentes||0)).slice(0,3).map(m=>m.municipio);
+    insMuni.innerHTML = `Recomendamos atenção especial aos municípios de <b>${top3.join(', ')}</b>, com maior concentração de acidentes no período.`;
+  }
+
+  // Rodapé: mês mais recente presente na série carregada (real, não fixo)
+  const ultimoMes = d.acidentes_mensal.length ? d.acidentes_mensal[d.acidentes_mensal.length-1].mes : '—';
+  document.querySelectorAll('.data-updated-note').forEach(el=>{
+    el.textContent = `Fonte: DATASUS, PRF, SIH/SUS, SAMU · Dados atualizados até ${ultimoMes}`;
+  });
+  const primeiroMes = d.acidentes_mensal.length ? d.acidentes_mensal[0].mes : '—';
+  document.querySelectorAll('.periodo-label').forEach(el=>{
+    el.textContent = `${primeiroMes} - ${ultimoMes}`;
+  });
+
+  applyPrevisoesFiltro();
+  renderSelectIaInsights();
+  renderExportButtons();
+}
+
+/* =========================================================================
+   SELECT IA — leitura automática dos dados (motor de regras, não IA generativa)
+   ========================================================================= */
+function computeInsights(){
+  const d = DATA;
+  const top = (arr, key) => arr && arr.length ? [...arr].sort((a,b)=>(b[key]||0)-(a[key]||0))[0] : null;
+  const estados = [...d.acidentes_estado].sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
+  const popByUf = {}; (d.populacao_uf||[]).forEach(p=>{ popByUf[p.uf]=p.populacao; });
+  const estadosPerCapita = estados.map(e=>({uf:e.uf, taxa: popByUf[e.uf] ? (e.acidentes||0)/popByUf[e.uf]*100000 : 0}))
+    .sort((a,b)=>b.taxa-a.taxa);
+  const causaTop = top((d.causas_acidente||[]).filter(c=>c.causa!=='Outras causas'), 'percentual');
+  const tipoTop = top((d.tipos_acidente||[]).filter(t=>t.tipo!=='Outros'), 'percentual');
+  const faixaTop = top(d.faixa_horaria, 'percentual');
+  const climaTop = top(d.condicao_metereologica, 'percentual');
+  const muniTop = top(d.municipios, 'acidentes');
+  const leitosPrev = (d.kpis_previsao||[]).find(k=>k.indicador==='Leitos');
+  const obitosKpi = (d.kpis||[]).find(k=>k.indicador==='Óbitos');
+  const totalAcidentes = (d.kpis||[]).find(k=>k.indicador==='Acidentes');
+  const rodoviaTop = top(d.rodovias, 'acidentes');
+  return {estados, estadosPerCapita, causaTop, tipoTop, faixaTop, climaTop, muniTop, leitosPrev, obitosKpi, totalAcidentes, rodoviaTop};
+}
+
+function renderSelectIaInsights(){
+  const el = document.getElementById('selectiaInsights');
+  if(!el) return;
+  const ins = computeInsights();
+  const cards = [
+    {ic:'📍', title:'Estado com mais acidentes', body: ins.estados[0] ? `<b>${ins.estados[0].uf}</b> concentra a maior parte dos acidentes registrados no período (${fmt(ins.estados[0].acidentes)}).` : '—'},
+    {ic:'⚖️', title:'Maior taxa por habitante', body: ins.estadosPerCapita[0] ? `<b>${ins.estadosPerCapita[0].uf}</b> tem a maior taxa de acidentes por 100 mil habitantes (${ins.estadosPerCapita[0].taxa.toFixed(1)}), mesmo não sendo o estado com mais acidentes em números absolutos.` : '—'},
+    {ic:'⚙️', title:'Principal causa', body: ins.causaTop ? `<b>${ins.causaTop.causa}</b> é a causa mais frequente, respondendo por <b>${ins.causaTop.percentual}%</b> dos acidentes.` : '—'},
+    {ic:'⏰', title:'Horário de maior risco', body: ins.faixaTop ? `O período das <b>${ins.faixaTop.faixa.replace('-','h às ')}h</b> concentra a maior fração dos acidentes (${ins.faixaTop.percentual}%).` : '—'},
+    {ic:'🌦️', title:'Condição climática predominante', body: ins.climaTop ? `A maioria dos acidentes (${ins.climaTop.percentual}%) ocorre com <b>${ins.climaTop.condicao}</b> — indício de que o clima ruim não é o principal fator de risco nas rodovias federais.` : '—'},
+    {ic:'🛏️', title:'Previsão de leitos', body: ins.leitosPrev ? `O modelo de regressão linear projeta variação de <b>${ins.leitosPrev.variacao}</b> na demanda por leitos (estim.) no próximo semestre.` : '—'},
+  ];
+  el.innerHTML = cards.map(c=>`<div class="card insight-card" style="padding:14px;">
+    <div class="insight-item" style="margin-bottom:0;"><div class="dot">${c.ic}</div><div><b style="display:block;font-size:12px;margin-bottom:3px;">${c.title}</b>${c.body}</div></div>
+  </div>`).join('');
+}
+
+function stripAccents(s){
+  return s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+}
+function answerSelectIa(pergunta){
+  const q = stripAccents(pergunta.toLowerCase());
+  const ins = computeInsights();
+  const has = (...ws) => ws.some(w=>q.includes(stripAccents(w)));
+
+  if(has('per capita','por habitante','100 mil','100k'))
+    return ins.estadosPerCapita[0] ? `O estado com maior taxa de acidentes por 100 mil habitantes é <b>${ins.estadosPerCapita[0].uf}</b>, com ${ins.estadosPerCapita[0].taxa.toFixed(1)} acidentes/100k hab.` : 'Não há dados de população carregados para calcular isso.';
+  if(has('estado') && has('acidente','mais'))
+    return ins.estados[0] ? `O estado com mais acidentes é <b>${ins.estados[0].uf}</b>, com ${fmt(ins.estados[0].acidentes)} acidentes registrados no período.` : 'Não encontrei essa informação nos dados carregados.';
+  if(has('causa'))
+    return ins.causaTop ? `A principal causa de acidentes é <b>${ins.causaTop.causa}</b> (${ins.causaTop.percentual}% dos casos).` : 'Não encontrei essa informação nos dados carregados.';
+  if(has('leito','demanda') && has('previs','futur','semestre'))
+    return ins.leitosPrev ? `A previsão é de variação de <b>${ins.leitosPrev.variacao}</b> na demanda por leitos (estimativa) no próximo semestre, segundo o modelo de regressão linear.` : 'Não há previsão carregada.';
+  if(has('horário','horario','faixa'))
+    return ins.faixaTop ? `O horário com mais acidentes é das <b>${ins.faixaTop.faixa.replace('-','h às ')}h</b> (${ins.faixaTop.percentual}% do total).` : 'Não encontrei essa informação.';
+  if(has('município','municipio','cidade'))
+    return ins.muniTop ? `O município com mais acidentes é <b>${ins.muniTop.municipio}/${ins.muniTop.uf}</b>, com ${fmt(ins.muniTop.acidentes)} acidentes.` : 'Não encontrei essa informação.';
+  if(has('clima','tempo','meteorológ','meteorolog'))
+    return ins.climaTop ? `A condição meteorológica mais frequente nos acidentes é <b>${ins.climaTop.condicao}</b> (${ins.climaTop.percentual}%).` : 'Não encontrei essa informação.';
+  if(has('rodovia','br-','estrada'))
+    return ins.rodoviaTop ? `A rodovia com mais acidentes é a <b>${ins.rodoviaTop.rodovia}</b> (${ins.rodoviaTop.trecho}), com ${fmt(ins.rodoviaTop.acidentes)} acidentes.` : 'Não encontrei essa informação.';
+  if(has('óbito','obito','morte','morreu','mortos'))
+    return ins.obitosKpi ? `Foram registrados ${fmt(ins.obitosKpi.valor)} óbitos no período (variação de ${ins.obitosKpi.variacao} vs. período anterior).` : 'Não encontrei essa informação.';
+  if(has('quant','total') && has('acidente'))
+    return ins.totalAcidentes ? `Foram registrados ${fmt(ins.totalAcidentes.valor)} acidentes no período (variação de ${ins.totalAcidentes.variacao} vs. período anterior).` : 'Não encontrei essa informação.';
+
+  return 'Não entendi a pergunta. Este é um motor de regras simples sobre os dados carregados (não um modelo de IA generativa) — tente perguntar sobre: estado com mais acidentes, taxa por habitante, principal causa, previsão de leitos, horário mais perigoso, município ou rodovia com mais acidentes, condição climática, ou total de óbitos/acidentes.';
+}
+
+/* =========================================================================
+   EXPORTAÇÃO — CSV dos dados carregados + relatório para impressão/PDF
+   ========================================================================= */
+function downloadBlob(filename, content, mime){
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderExportButtons(){
+  const el = document.getElementById('exportCsvButtons');
+  if(!el) return;
+  el.innerHTML = DATASETS.map(name =>
+    `<button class="export-csv-btn" data-dataset="${name}">⬇️ ${name}.csv</button>`
+  ).join('');
+  el.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const name = btn.dataset.dataset;
+      const csv = Papa.unparse(DATA[name] || []);
+      downloadBlob(`${name}.csv`, csv, 'text/csv;charset=utf-8;');
+    });
+  });
+}
+
+function gerarRelatorioImprimivel(){
+  const d = DATA;
+  const ins = computeInsights();
+  const kpiRow = (d.kpis||[]).map(k=>`<div class="rel-kpi"><span>${k.indicador}</span><b>${fmt(k.valor)}</b><span>${k.tendencia==='down'?'▼':'▲'} ${k.variacao||''}</span></div>`).join('');
+  const rankingRows = ins.estados.slice(0,10).map((e,i)=>`<tr><td>${i+1}</td><td>${e.uf}</td><td>${fmt(e.acidentes)}</td></tr>`).join('');
+  const dataGeracao = new Date().toLocaleString('pt-BR');
+  document.getElementById('relatorioImprimivel').innerHTML = `
+    <h1 class="rel-h1">SEDAT-SUS — Relatório Resumido</h1>
+    <p class="rel-sub">Gerado em ${dataGeracao} · Fonte: DATASUS, PRF, SIH/SUS, SAMU</p>
+    <div class="rel-kpis">${kpiRow}</div>
+    <div class="rel-section-title">Ranking de Estados por Acidentes</div>
+    <table class="rel-table"><thead><tr><th>#</th><th>Estado</th><th>Acidentes</th></tr></thead><tbody>${rankingRows}</tbody></table>
+    <div class="rel-section-title">Principais Insights</div>
+    <p style="font-size:11px;line-height:1.6;">
+      ${ins.causaTop ? `Principal causa: <b>${ins.causaTop.causa}</b> (${ins.causaTop.percentual}%). ` : ''}
+      ${ins.faixaTop ? `Horário de maior risco: <b>${ins.faixaTop.faixa.replace('-','h às ')}h</b>. ` : ''}
+      ${ins.leitosPrev ? `Previsão de leitos (próximo semestre): <b>${ins.leitosPrev.variacao}</b>.` : ''}
+    </p>`;
+}
+
+document.getElementById('btnExportarRelatorio')?.addEventListener('click', ()=>{
+  gerarRelatorioImprimivel();
+  window.print();
+});
+
+function fazerPergunta(){
+  const input = document.getElementById('selectiaPergunta');
+  const out = document.getElementById('selectiaResposta');
+  if(!input || !out || !input.value.trim()) return;
+  out.innerHTML = `<b>P:</b> ${input.value}<br><b>R:</b> ${answerSelectIa(input.value)}`;
+}
+document.getElementById('selectiaBtn')?.addEventListener('click', fazerPergunta);
+document.getElementById('selectiaPergunta')?.addEventListener('keydown', (ev)=>{ if(ev.key==='Enter') fazerPergunta(); });
+
+document.getElementById('btnVerTodosEstados')?.addEventListener('click', (ev)=>{
+  showAllEstados = !showAllEstados;
+  fillRanking('rankingBody', lastEstadosOrdenados, null, showAllEstados ? lastEstadosOrdenados.length : 10);
+  ev.target.textContent = showAllEstados ? 'Ver top 10' : `Ver todos os estados (${lastEstadosOrdenados.length})`;
+});
+document.getElementById('btnVerTodosEstadosGeo')?.addEventListener('click', (ev)=>{
+  showAllEstadosGeo = !showAllEstadosGeo;
+  updateRankingGeo();
+  ev.target.textContent = showAllEstadosGeo ? 'Ver top 10 →' : `Ver todos os estados (${lastEstadosOrdenados.length}) →`;
+});
+document.getElementById('btnVerTodosMunicipios')?.addEventListener('click', (ev)=>{
+  showAllMunicipios = !showAllMunicipios;
+  updateMunicipiosBody();
+  ev.target.textContent = showAllMunicipios ? 'Ver top 10 →' : 'Ver mais municípios (30) →';
+});
+document.getElementById('btnVerTodasRodovias')?.addEventListener('click', (ev)=>{
+  showAllRodovias = !showAllRodovias;
+  updateRodoviasBody();
+  ev.target.textContent = showAllRodovias ? 'Ver top 10 →' : 'Ver mais rodovias (20) →';
+});
+
+/* ---------- Botões de recarregar (⟳) ---------- */
+['btnReloadGeo','btnReloadPrevisoes','btnReloadAnalises','btnReloadRecursos'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click', ()=>autoLoadFromServer());
+});
+
+/* ---------- Ajuda ---------- */
+document.getElementById('btnHelp')?.addEventListener('click', ()=>{
+  alert('SEDAT-SUS — Guia rápido\n\n'
+    + '• Overview: KPIs e visão geral dos acidentes.\n'
+    + '• Análises: causas, gravidade e condição climática dos acidentes.\n'
+    + '• Previsões: modelo de regressão linear projetando os próximos 6 meses.\n'
+    + '• Geográfico: mapa por estado, ranking e filtros geoespaciais.\n'
+    + '• Recursos: demanda estimada de leitos/atendimentos por estado.\n'
+    + '• Select IA: insights automáticos + caixa de perguntas sobre os dados.\n'
+    + '• Exportação: baixe os dados em CSV ou gere um relatório para impressão/PDF.\n\n'
+    + 'Os dados vêm da pasta /dados — use "Recarregar de /dados" na barra lateral após atualizar os arquivos.');
+});
+
+/* ---------- Botões "ir para aba X" ---------- */
+document.querySelectorAll('[data-goto-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelector(`.tab-btn[data-tab="${btn.dataset.gotoTab}"]`)?.click();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+/* ---------- Mapa Geográfico: camada (acidentes/óbitos), tipo de mapa, zoom ---------- */
+document.querySelectorAll('input[name="mapLayer"]').forEach(r=>{
+  r.addEventListener('change', renderAll);
+});
+document.getElementById('btnMapaCalor')?.addEventListener('click', ()=>{
+  geoMapPointMode = false;
+  document.getElementById('btnMapaCalor').classList.add('active');
+  document.getElementById('btnMapaPontos').classList.remove('active');
+  renderAll();
+});
+document.getElementById('btnMapaPontos')?.addEventListener('click', ()=>{
+  geoMapPointMode = true;
+  document.getElementById('btnMapaPontos').classList.add('active');
+  document.getElementById('btnMapaCalor').classList.remove('active');
+  renderAll();
+});
+function applyGeoMapZoom(){
+  const svg = document.getElementById('brMapGeo');
+  if(!svg) return;
+  const base = 500, baseH = 460, cx = base/2, cy = baseH/2;
+  const w = base/geoMapZoomLevel, h = baseH/geoMapZoomLevel;
+  svg.setAttribute('viewBox', `${cx-w/2} ${cy-h/2} ${w} ${h}`);
+}
+document.getElementById('btnMapZoomIn')?.addEventListener('click', ()=>{
+  geoMapZoomLevel = Math.min(geoMapZoomLevel + 0.3, 2.5);
+  applyGeoMapZoom();
+});
+document.getElementById('btnMapZoomOut')?.addEventListener('click', ()=>{
+  geoMapZoomLevel = Math.max(geoMapZoomLevel - 0.3, 1);
+  applyGeoMapZoom();
+});
+
+/* ---------- Filtro de Estado: Evolução dos Acidentes (Overview) ---------- */
+document.getElementById('selectEvolucaoEstado')?.addEventListener('change', (ev)=>{
+  const uf = ev.target.value;
+  let labels, valores;
+  if(!uf){
+    labels = DATA.acidentes_mensal.map(x=>x.mes);
+    valores = DATA.acidentes_mensal.map(x=>x.acidentes);
+  } else {
+    const serieUf = DATA.acidentes_mensal_estado.filter(x=>x.uf===uf);
+    labels = serieUf.map(x=>x.mes);
+    valores = serieUf.map(x=>x.acidentes);
+  }
+  upsertChart('chartEvolucao', 'line', {
+    labels, datasets:[{label:'Acidentes', data:valores, borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointBackgroundColor:'#2f6fed'}]
+  }, {plugins:{legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}}}, scales:{y:{beginAtZero:true, ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+});
+
+/* ---------- Filtros da aba Geográfico: Estado / Tipo de Acidente / Município ---------- */
+function updateRankingGeo(){
+  const estadoSel = document.getElementById('selectGeoEstado')?.value || '';
+  const tipoSel = document.getElementById('selectGeoTipo')?.value || '';
+  let list;
+  if(tipoSel){
+    list = [...(DATA.acidentes_estado_tipo||[])].filter(r=>r.tipo===tipoSel)
+      .map(r=>({uf:r.uf, acidentes:r.acidentes}))
+      .sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
+  } else {
+    list = lastEstadosOrdenados;
+  }
+  if(estadoSel) list = list.filter(e=>e.uf===estadoSel);
+  fillRanking('rankingBodyGeo', list, lastPopByUf, estadoSel ? 1 : (showAllEstadosGeo ? list.length : 10));
+}
+function updateMunicipiosBody(){
+  const estadoSel = document.getElementById('selectGeoEstado')?.value || '';
+  const muniSel = document.getElementById('selectGeoMunicipio')?.value || '';
+  let list = estadoSel
+    ? [...(DATA.municipios_estado||[])].filter(m=>m.uf===estadoSel)
+    : [...(DATA.municipios||[])];
+  list = list.sort((a,b)=>(b.acidentes||0)-(a.acidentes||0));
+  if(muniSel) list = list.filter(m=>m.municipio===muniSel);
+  const limit = muniSel ? 1 : (showAllMunicipios ? list.length : 10);
+  const max = Math.max(...list.map(m=>m.acidentes||0), 1);
+  document.getElementById('municipiosBody').innerHTML = list.slice(0,limit).map((m,i)=>{
+    const pct = ((m.acidentes||0)/max*100).toFixed(0);
+    return `<tr><td>${i+1}</td><td>${m.municipio}</td><td>${m.uf||''}</td><td>
+      <div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <span style="min-width:44px;text-align:right;display:inline-block;">${fmt(m.acidentes)}</span></div>
+    </td></tr>`;
+  }).join('');
+}
+function updateRodoviasBody(){
+  const limit = showAllRodovias ? DATA.rodovias.length : 10;
+  document.getElementById('rodoviasBody').innerHTML = DATA.rodovias.slice(0,limit).map(r=>{
+    return `<tr><td>${r.rodovia}</td><td style="font-size:11.5px;">${r.trecho}</td><td>${fmt(r.acidentes)}</td><td>${r.percentual ?? ''}</td></tr>`;
+  }).join('');
+}
+['selectGeoEstado','selectGeoMunicipio','selectGeoTipo'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('change', renderAll);
+});
+
+/* ---------- Filtro de Estado: aba Previsões (modelo próprio por UF) ---------- */
+function applyPrevisoesFiltro(){
+  const uf = document.getElementById('selectPrevisaoEstado')?.value || '';
+  const kpiPrevMap = {acidentes:'kpiPrevAmb', leitos:'kpiPrevLeitos', atendimentos:'kpiPrevAtend', obitos:'kpiPrevObitos'};
+
+  if(!uf){
+    const kpiPrevMapNac = {'Leitos':'kpiPrevLeitos','Acidentes':'kpiPrevAmb','Atendimentos':'kpiPrevAtend','Óbitos':'kpiPrevObitos'};
+    (DATA.kpis_previsao||[]).forEach(k=>{ const p = kpiPrevMapNac[k.indicador]; if(p) fillKpi(p, k.indicador, k.valor, k.variacao, 'up'); });
+    upsertChart('chartPrevisao', 'line', {
+      labels: DATA.previsao_mensal.map(x=>x.mes),
+      datasets:[
+        {label:'Real', data:DATA.previsao_mensal.map(x=>x.real), borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
+        {label:'Previsto', data:DATA.previsao_mensal.map(x=>x.previsto), borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
+      ]
+    }, {plugins:{legend:{position:'top', align:'start'}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+    upsertChart('chartPrevMes', 'bar', {
+      labels: DATA.previsao_semestre.map(x=>x.mes),
+      datasets:[{data: DATA.previsao_semestre.map(x=>x.previsto), backgroundColor:'#2f6fed', borderRadius:5}]
+    }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+    document.getElementById('comparacaoBody').innerHTML = DATA.comparacao_real_previsto.map(r=>{
+      return `<tr><td>${r.icone||''} ${r.recurso}</td><td>${fmt(r.real)}</td><td>${fmt(r.previsto)}</td>
+        <td style="color:var(--red-600);font-weight:700;">▲${r.variacao ?? ''}</td></tr>`;
+    }).join('');
+    return;
+  }
+
+  const kpiRow = (DATA.kpis_previsao_estado||[]).find(k=>k.uf===uf);
+  if(kpiRow){
+    fillKpi('kpiPrevLeitos', 'Leitos', kpiRow.leitos_valor, kpiRow.leitos_variacao, 'up');
+    fillKpi('kpiPrevAmb', 'Acidentes', kpiRow.acidentes_valor, kpiRow.acidentes_variacao, 'up');
+    fillKpi('kpiPrevAtend', 'Atendimentos', kpiRow.atendimentos_valor, kpiRow.atendimentos_variacao, 'up');
+    fillKpi('kpiPrevObitos', 'Óbitos', kpiRow.obitos_valor, kpiRow.obitos_variacao, 'up');
+  }
+
+  const realUf = (DATA.serie_mensal_estado||[]).filter(s=>s.uf===uf);
+  const prevUf = (DATA.previsao_mensal_estado||[]).filter(s=>s.uf===uf);
+  upsertChart('chartPrevisao', 'line', {
+    labels: [...realUf.map(x=>x.mes), ...prevUf.map(x=>x.mes)],
+    datasets:[
+      {label:'Real', data:[...realUf.map(x=>x.acidentes), ...prevUf.map(()=>null)], borderColor:'#2f6fed', tension:.3, pointRadius:3, spanGaps:false},
+      {label:'Previsto', data:[...realUf.map(()=>null), ...prevUf.map(x=>x.previsto_acidentes)], borderColor:'#0f9d58', borderDash:[6,4], tension:.3, pointRadius:3, spanGaps:false}
+    ]
+  }, {plugins:{legend:{position:'top', align:'start'}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+
+  upsertChart('chartPrevMes', 'bar', {
+    labels: prevUf.map(x=>x.mes),
+    datasets:[{data: prevUf.map(x=>x.previsto_leitos), backgroundColor:'#2f6fed', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{y:{ticks:{callback:v=>v>=1000?(v/1000)+' Mil':v}}}});
+
+  const ultimos6 = realUf.slice(-6);
+  const sum6 = k => ultimos6.reduce((s,r)=>s+(r[k]||0),0);
+  const sumPrev = k => prevUf.reduce((s,r)=>s+(r[k]||0),0);
+  const rows = [
+    {icone:'🛏️', recurso:'Leitos Ocupados', real:sum6('leitos_estim'), previsto:sumPrev('previsto_leitos'), variacao:kpiRow?.leitos_variacao},
+    {icone:'🚗', recurso:'Acidentes', real:sum6('acidentes'), previsto:sumPrev('previsto_acidentes'), variacao:kpiRow?.acidentes_variacao},
+    {icone:'🧑‍⚕️', recurso:'Atendimentos', real:sum6('atendimentos_estim'), previsto:sumPrev('previsto_atendimentos'), variacao:kpiRow?.atendimentos_variacao},
+    {icone:'❤️', recurso:'Óbitos', real:sum6('obitos'), previsto:sumPrev('previsto_obitos'), variacao:kpiRow?.obitos_variacao},
+  ];
+  document.getElementById('comparacaoBody').innerHTML = rows.map(r=>
+    `<tr><td>${r.icone} ${r.recurso}</td><td>${fmt(r.real)}</td><td>${fmt(r.previsto)}</td>
+      <td style="color:var(--red-600);font-weight:700;">${r.variacao || ''}</td></tr>`
+  ).join('');
+
+  if(kpiRow){
+    const rec = document.getElementById('insightRecomendacao');
+    if(rec) rec.innerHTML = `Para <b>${uf}</b>, o modelo de regressão linear (ajustado só com os dados desse estado) projeta variação de <b>${kpiRow.leitos_variacao}</b> na demanda por leitos (estim.) no próximo semestre.`;
+    const resumo = document.getElementById('resumoPrevisaoTexto');
+    if(resumo) resumo.textContent = `Em ${uf}, há tendência de variação de leitos ocupados (estim.) de ${kpiRow.leitos_variacao} no próximo semestre.`;
+  }
+}
+document.getElementById('selectPrevisaoEstado')?.addEventListener('change', applyPrevisoesFiltro);
+
+function upsertChart(canvasId, type, data, options){
+  if(charts[canvasId]){
+    charts[canvasId].data = data;
+    charts[canvasId].options = {...charts[canvasId].options, ...options};
+    charts[canvasId].update();
+  }else{
+    charts[canvasId] = new Chart(document.getElementById(canvasId), {type, data, options});
+  }
+}
+
+/* ---------- Mapa estilizado do Brasil (bolhas por estado) ---------- */
+let geoMapPointMode = false, geoMapZoomLevel = 1;
+function renderBrMap(svgId, data, valueField){
+  valueField = valueField || 'acidentes';
+  const svg = document.getElementById(svgId);
+  const max = Math.max(...data.map(d=>d[valueField]||0), 1);
+  const coords = {
+    'São Paulo':[230,300],'Minas Gerais':[260,230],'Paraná':[210,340],'Rio Grande do Sul':[190,410],
+    'Bahia':[300,170],'Santa Catarina':[210,375],'Goiás':[210,220],'Rio de Janeiro':[280,290],
+    'Pernambuco':[330,110],'Ceará':[320,60],'Distrito Federal':[230,190],'Espírito Santo':[300,250],
+    'Mato Grosso':[160,200],'Mato Grosso do Sul':[170,280],'Pará':[220,60],'Amazonas':[120,60],
+    'Maranhão':[280,40],'Piauí':[300,80],'Rio Grande do Norte':[350,70],'Paraíba':[350,90],
+    'Alagoas':[340,130],'Sergipe':[330,150],'Rondônia':[110,140],'Acre':[70,120],'Roraima':[130,10],
+    'Amapá':[210,10],'Tocantins':[240,130],
+  };
+  let shapes = `<path d="M120,60 Q220,20 320,50 Q400,90 380,180 Q420,240 360,320 Q340,400 260,430 Q180,440 150,380 Q90,340 100,260 Q60,180 90,120 Z" fill="#eef1f7" stroke="#e3e7f0" stroke-width="2"/>`;
+  const pointMode = svgId === 'brMapGeo' && geoMapPointMode;
+  data.slice(0,10).forEach(dd=>{
+    const [x,y] = coords[dd.uf] || [250,250];
+    const acc = dd[valueField]||0;
+    const intensity = acc/max;
+    const r = pointMode ? 7 : 10 + intensity*32;
+    const color = intensity>0.75 ? '#0b2559' : intensity>0.5 ? '#1e4bc4' : intensity>0.25 ? '#2f6fed' : '#a9c3fb';
+    shapes += `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" fill-opacity="0.85"><title>${dd.uf}: ${fmt(acc)}</title></circle>`;
+    if(!pointMode) shapes += `<text x="${x}" y="${y+4}" text-anchor="middle" font-size="9" fill="#fff" font-weight="700" style="pointer-events:none;">${(acc/1000).toFixed(0)}k</text>`;
+  });
+  svg.innerHTML = shapes;
+}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- Modo admin (oculta os controles de atualização de dados do público) ----------
+   A senha não fica no código do site: quem clicar em "Modo admin" e digitar a senha,
+   ela é conferida por uma função serverless (api/admin-login.js) contra a variável de
+   ambiente ADMIN_PASSWORD cadastrada no projeto da Vercel. Localmente (iniciar_dashboard.bat)
+   essa função não existe, então o login só funciona na versão publicada. */
+const ADMIN_KEY = 'sedatSusAdminMode';
+
+function setAdminMode(on){
+  document.body.classList.toggle('is-admin', on);
+  document.getElementById('btnAdminToggle').textContent = on ? 'Sair do modo admin' : 'Modo admin';
+  if(on) localStorage.setItem(ADMIN_KEY, '1'); else localStorage.removeItem(ADMIN_KEY);
+}
+
+function openAdminModal(){
+  document.getElementById('adminError').style.display = 'none';
+  document.getElementById('adminPasswordInput').value = '';
+  document.getElementById('adminModalBackdrop').classList.add('show');
+  document.getElementById('adminPasswordInput').focus();
+}
+function closeAdminModal(){
+  document.getElementById('adminModalBackdrop').classList.remove('show');
+}
+
+async function tryAdminLogin(){
+  const password = document.getElementById('adminPasswordInput').value;
+  const errEl = document.getElementById('adminError');
+  errEl.style.display = 'none';
+  try{
+    const r = await fetch('/api/admin-login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({password}),
+    });
+    const data = await r.json().catch(()=>({ok:false}));
+    if(r.ok && data.ok){
+      setAdminMode(true);
+      closeAdminModal();
+    }else if(data && data.error === 'wrong_password'){
+      errEl.textContent = 'Senha incorreta.';
+      errEl.style.display = 'block';
+    }else{
+      errEl.textContent = 'Login de admin só funciona na versão publicada (Vercel) — este servidor local não tem a função /api.';
+      errEl.style.display = 'block';
+    }
+  }catch(e){
+    errEl.textContent = 'Login de admin só funciona na versão publicada (Vercel) — este servidor local não tem a função /api.';
+    errEl.style.display = 'block';
+  }
+}
+
+document.getElementById('btnAdminToggle').addEventListener('click', ()=>{
+  if(document.body.classList.contains('is-admin')) setAdminMode(false);
+  else openAdminModal();
+});
+document.getElementById('adminCancelBtn').addEventListener('click', closeAdminModal);
+document.getElementById('adminModalBackdrop').addEventListener('click', (ev)=>{
+  if(ev.target.id === 'adminModalBackdrop') closeAdminModal();
+});
+document.getElementById('adminConfirmBtn').addEventListener('click', tryAdminLogin);
+document.getElementById('adminPasswordInput').addEventListener('keydown', (ev)=>{
+  if(ev.key === 'Enter') tryAdminLogin();
+});
+
+if(localStorage.getItem(ADMIN_KEY) === '1') setAdminMode(true);
+
+/* ---------- Inicialização ---------- */
+renderAll();
+autoLoadFromServer();
+</script>
+</body>
+</html>

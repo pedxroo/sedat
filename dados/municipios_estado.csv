@@ -1,0 +1,384 @@
+uf,municipio,acidentes
+Acre,Rio Branco,257
+Acre,Cruzeiro Do Sul,23
+Acre,Sena Madureira,21
+Acre,Senador Guiomard,21
+Acre,Bujari,20
+Acre,Epitaciolandia,19
+Acre,Xapuri,14
+Acre,Capixaba,12
+Acre,Acrelandia,9
+Acre,Tarauaca,7
+Acre,Brasileia,7
+Acre,Feijo,3
+Acre,Placido De Castro,2
+Acre,Porto Acre,2
+Acre,Assis Brasil,1
+Alagoas,Rio Largo,97
+Alagoas,Pilar,66
+Alagoas,Sao Miguel Dos Campos,61
+Alagoas,Palmeira Dos Indios,53
+Alagoas,Satuba,45
+Alagoas,Uniao Dos Palmares,43
+Alagoas,Messias,40
+Alagoas,Flexeiras,39
+Alagoas,Atalaia,36
+Alagoas,Teotonio Vilela,34
+Alagoas,Sao Sebastiao,34
+Alagoas,Junqueiro,29
+Alagoas,Santana Do Ipanema,29
+Alagoas,Porto Real Do Colegio,29
+Alagoas,Murici,27
+Amazonas,Manaus,85
+Amazonas,Humaita,44
+Amazonas,Presidente Figueiredo,39
+Amazonas,Canutama,15
+Amazonas,Careiro,7
+Amazonas,Tapaua,4
+Amazonas,Manicore,3
+Amazonas,Rio Preto Da Eva,3
+Amazonas,Beruri,3
+Amazonas,Careiro Da Varzea,3
+Amazonas,Manaquiri,2
+Amazonas,Apui,1
+Amazonas,Borba,1
+Amazonas,Labrea,1
+Amapá,Macapa,118
+Amapá,Oiapoque,38
+Amapá,Porto Grande,33
+Amapá,Tartarugalzinho,14
+Amapá,Ferreira Gomes,8
+Amapá,Calcoene,8
+Amapá,Laranjal Do Jari,4
+Amapá,Pracuuba,3
+Amapá,Pedra Branca Do Amapari,3
+Amapá,Amapa,2
+Amapá,Mazagao,2
+Amapá,Santana,2
+Bahia,Feira De Santana,613
+Bahia,Vitoria Da Conquista,439
+Bahia,Salvador,353
+Bahia,Eunapolis,196
+Bahia,Simoes Filho,178
+Bahia,Porto Seguro,164
+Bahia,Jequie,147
+Bahia,Barreiras,145
+Bahia,Amelia Rodrigues,140
+Bahia,Juazeiro,135
+Bahia,Sao Sebastiao Do Passe,118
+Bahia,Itabuna,116
+Bahia,Alagoinhas,111
+Bahia,Teixeira De Freitas,102
+Bahia,Candeias,98
+Ceará,Fortaleza,318
+Ceará,Caucaia,166
+Ceará,Tiangua,103
+Ceará,Aquiraz,93
+Ceará,Sobral,92
+Ceará,Eusebio,85
+Ceará,Horizonte,81
+Ceará,Aracati,73
+Ceará,Itaitinga,57
+Ceará,Pacajus,51
+Ceará,Caninde,46
+Ceará,Russas,44
+Ceará,Caridade,40
+Ceará,Ico,38
+Ceará,Milagres,36
+Distrito Federal,Brasilia,1485
+Espírito Santo,Serra,683
+Espírito Santo,Linhares,509
+Espírito Santo,Cariacica,419
+Espírito Santo,Viana,226
+Espírito Santo,Sao Mateus,216
+Espírito Santo,Domingos Martins,137
+Espírito Santo,Colatina,116
+Espírito Santo,Ibiracu,102
+Espírito Santo,Ibatiba,99
+Espírito Santo,Marechal Floriano,93
+Espírito Santo,Guarapari,90
+Espírito Santo,Conceicao Da Barra,88
+Espírito Santo,Anchieta,84
+Espírito Santo,Rio Novo Do Sul,75
+Espírito Santo,Venda Nova Do Imigrante,73
+Goiás,Anapolis,543
+Goiás,Goiania,304
+Goiás,Rio Verde,272
+Goiás,Valparaiso De Goias,205
+Goiás,Aparecida De Goiania,197
+Goiás,Luziania,175
+Goiás,Aguas Lindas De Goias,174
+Goiás,Cristalina,169
+Goiás,Alexania,115
+Goiás,Formosa,111
+Goiás,Abadiania,110
+Goiás,Jatai,106
+Goiás,Catalao,104
+Goiás,Morrinhos,90
+Goiás,Hidrolandia,86
+Maranhão,Sao Luis,363
+Maranhão,Imperatriz,182
+Maranhão,Acailandia,138
+Maranhão,Caxias,86
+Maranhão,Balsas,84
+Maranhão,Timon,82
+Maranhão,Bacabeira,70
+Maranhão,Barra Do Corda,65
+Maranhão,Itapecuru Mirim,55
+Maranhão,Santa Ines,47
+Maranhão,Barao De Grajau,34
+Maranhão,Peritoro,33
+Maranhão,Santa Rita,32
+Maranhão,Santa Luzia,31
+Maranhão,Alto Alegre Do Maranhao,28
+Minas Gerais,Betim,1030
+Minas Gerais,Uberaba,528
+Minas Gerais,Uberlandia,484
+Minas Gerais,Contagem,454
+Minas Gerais,Governador Valadares,400
+Minas Gerais,Ribeirao Das Neves,313
+Minas Gerais,Manhuacu,297
+Minas Gerais,Nova Lima,244
+Minas Gerais,Muriae,236
+Minas Gerais,Teofilo Otoni,232
+Minas Gerais,Juiz De Fora,200
+Minas Gerais,Araguari,200
+Minas Gerais,Nova Serrana,178
+Minas Gerais,Sete Lagoas,176
+Minas Gerais,Sabara,175
+Mato Grosso do Sul,Campo Grande,430
+Mato Grosso do Sul,Dourados,223
+Mato Grosso do Sul,Sidrolandia,111
+Mato Grosso do Sul,Mundo Novo,84
+Mato Grosso do Sul,Nova Alvorada Do Sul,83
+Mato Grosso do Sul,Ribas Do Rio Pardo,76
+Mato Grosso do Sul,Paranaiba,69
+Mato Grosso do Sul,Rio Verde De Mato Grosso,66
+Mato Grosso do Sul,Sao Gabriel Do Oeste,65
+Mato Grosso do Sul,Itaquirai,63
+Mato Grosso do Sul,Terenos,63
+Mato Grosso do Sul,Bandeirantes,60
+Mato Grosso do Sul,Bataguassu,56
+Mato Grosso do Sul,Coxim,56
+Mato Grosso do Sul,Jardim,56
+Mato Grosso,Sinop,336
+Mato Grosso,Rondonopolis,295
+Mato Grosso,Barra Do Garcas,261
+Mato Grosso,Sorriso,257
+Mato Grosso,Varzea Grande,247
+Mato Grosso,Cuiaba,177
+Mato Grosso,Santo Antonio Do Leverger,144
+Mato Grosso,Caceres,139
+Mato Grosso,Jaciara,133
+Mato Grosso,Nova Mutum,130
+Mato Grosso,Pontes E Lacerda,128
+Mato Grosso,Diamantino,104
+Mato Grosso,Guaranta Do Norte,101
+Mato Grosso,Lucas Do Rio Verde,95
+Mato Grosso,Primavera Do Leste,75
+Pará,Maraba,241
+Pará,Altamira,129
+Pará,Itaituba,127
+Pará,Castanhal,126
+Pará,Novo Progresso,126
+Pará,Trairao,79
+Pará,Dom Eliseu,76
+Pará,Santa Izabel Do Para,76
+Pará,Santa Maria Do Para,59
+Pará,Santarem,54
+Pará,Capanema,47
+Pará,Sao Francisco Do Para,43
+Pará,Benevides,42
+Pará,Ipixuna Do Para,31
+Pará,Paragominas,30
+Paraíba,Joao Pessoa,806
+Paraíba,Cabedelo,269
+Paraíba,Campina Grande,227
+Paraíba,Santa Rita,183
+Paraíba,Bayeux,177
+Paraíba,Queimadas,88
+Paraíba,Patos,79
+Paraíba,Mamanguape,64
+Paraíba,Lagoa Seca,58
+Paraíba,Alhandra,48
+Paraíba,Sousa,44
+Paraíba,Cajazeiras,44
+Paraíba,Conde,43
+Paraíba,Caapora,43
+Paraíba,Cruz Do Espirito Santo,41
+Pernambuco,Recife,935
+Pernambuco,Petrolina,407
+Pernambuco,Jaboatao Dos Guararapes,352
+Pernambuco,Caruaru,312
+Pernambuco,Igarassu,209
+Pernambuco,Abreu E Lima,141
+Pernambuco,Garanhuns,133
+Pernambuco,Serra Talhada,132
+Pernambuco,Gravata,118
+Pernambuco,Salgueiro,80
+Pernambuco,Paulista,79
+Pernambuco,Moreno,78
+Pernambuco,Arcoverde,75
+Pernambuco,Pombos,69
+Pernambuco,Itapissuma,65
+Piauí,Teresina,722
+Piauí,Parnaiba,172
+Piauí,Floriano,156
+Piauí,Picos,154
+Piauí,Altos,107
+Piauí,Campo Maior,71
+Piauí,Oeiras,59
+Piauí,Piripiri,54
+Piauí,Demerval Lobao,38
+Piauí,Buriti Dos Lopes,37
+Piauí,Bom Jesus,36
+Piauí,Monsenhor Gil,31
+Piauí,Geminiano,23
+Piauí,Amarante,22
+Piauí,Lagoa Do Piaui,22
+Paraná,Curitiba,982
+Paraná,Sao Jose Dos Pinhais,692
+Paraná,Cascavel,477
+Paraná,Maringa,404
+Paraná,Campina Grande Do Sul,369
+Paraná,Ponta Grossa,356
+Paraná,Foz Do Iguacu,346
+Paraná,Paranagua,313
+Paraná,Londrina,257
+Paraná,Apucarana,251
+Paraná,Morretes,234
+Paraná,Campo Largo,209
+Paraná,Colombo,192
+Paraná,Fazenda Rio Grande,186
+Paraná,Palmeira,174
+Rio de Janeiro,Duque De Caxias,1233
+Rio de Janeiro,Nova Iguacu,663
+Rio de Janeiro,Rio De Janeiro,647
+Rio de Janeiro,Angra Dos Reis,639
+Rio de Janeiro,Campos Dos Goytacazes,520
+Rio de Janeiro,Sao Goncalo,494
+Rio de Janeiro,Seropedica,410
+Rio de Janeiro,Petropolis,395
+Rio de Janeiro,Mage,336
+Rio de Janeiro,Niteroi,328
+Rio de Janeiro,Itaborai,327
+Rio de Janeiro,Mangaratiba,249
+Rio de Janeiro,Sao Joao De Meriti,239
+Rio de Janeiro,Barra Mansa,231
+Rio de Janeiro,Itaguai,216
+Rio Grande do Norte,Natal,440
+Rio Grande do Norte,Mossoro,419
+Rio Grande do Norte,Parnamirim,294
+Rio Grande do Norte,Sao Goncalo Do Amarante,207
+Rio Grande do Norte,Macaiba,166
+Rio Grande do Norte,Sao Jose De Mipibu,74
+Rio Grande do Norte,Ceara-Mirim,62
+Rio Grande do Norte,Extremoz,40
+Rio Grande do Norte,Acu,36
+Rio Grande do Norte,Santa Cruz,32
+Rio Grande do Norte,Currais Novos,31
+Rio Grande do Norte,Goianinha,30
+Rio Grande do Norte,Itaja,26
+Rio Grande do Norte,Angicos,23
+Rio Grande do Norte,Apodi,23
+Rondônia,Porto Velho,526
+Rondônia,Vilhena,327
+Rondônia,Ji-Parana,260
+Rondônia,Jaru,234
+Rondônia,Cacoal,153
+Rondônia,Ariquemes,149
+Rondônia,Pimenta Bueno,146
+Rondônia,Candeias Do Jamari,92
+Rondônia,Ouro Preto Do Oeste,83
+Rondônia,Presidente Medici,77
+Rondônia,Colorado Do Oeste,49
+Rondônia,Itapua Do Oeste,45
+Rondônia,Nova Mamore,30
+Rondônia,Guajara-Mirim,29
+Rondônia,Cerejeiras,26
+Roraima,Boa Vista,63
+Roraima,Canta,43
+Roraima,Bonfim,28
+Roraima,Rorainopolis,22
+Roraima,Caracarai,11
+Roraima,Mucajai,8
+Roraima,Iracema,7
+Roraima,Amajari,6
+Roraima,Pacaraima,4
+Roraima,Normandia,1
+Roraima,Sao Joao Da Baliza,1
+Rio Grande do Sul,Canoas,380
+Rio Grande do Sul,Porto Alegre,366
+Rio Grande do Sul,Santa Maria,265
+Rio Grande do Sul,Caxias Do Sul,263
+Rio Grande do Sul,Pelotas,236
+Rio Grande do Sul,Sao Leopoldo,226
+Rio Grande do Sul,Vacaria,173
+Rio Grande do Sul,Eldorado Do Sul,169
+Rio Grande do Sul,Rio Grande,165
+Rio Grande do Sul,Bento Goncalves,139
+Rio Grande do Sul,Uruguaiana,120
+Rio Grande do Sul,Novo Hamburgo,109
+Rio Grande do Sul,Sapucaia Do Sul,109
+Rio Grande do Sul,Santo Antonio Da Patrulha,108
+Rio Grande do Sul,Gravatai,106
+Santa Catarina,Sao Jose,1135
+Santa Catarina,Palhoca,830
+Santa Catarina,Araquari,547
+Santa Catarina,Itajai,546
+Santa Catarina,Joinville,450
+Santa Catarina,Biguacu,430
+Santa Catarina,Itapema,399
+Santa Catarina,Balneario Camboriu,388
+Santa Catarina,Blumenau,300
+Santa Catarina,Florianopolis,295
+Santa Catarina,Mafra,207
+Santa Catarina,Guaramirim,205
+Santa Catarina,Tubarao,199
+Santa Catarina,Rio Do Sul,195
+Santa Catarina,Indaial,195
+Sergipe,Nossa Senhora Do Socorro,188
+Sergipe,Itabaiana,122
+Sergipe,Estancia,88
+Sergipe,Sao Cristovao,57
+Sergipe,Aracaju,51
+Sergipe,Cristinapolis,41
+Sergipe,Itaporanga Dajuda,35
+Sergipe,Umbauba,29
+Sergipe,Areia Branca,28
+Sergipe,Maruim,28
+Sergipe,Rosario Do Catete,28
+Sergipe,Laranjeiras,28
+Sergipe,Japaratuba,22
+Sergipe,Carira,15
+Sergipe,Cedro De Sao Joao,15
+São Paulo,Guarulhos,1045
+São Paulo,Sao Jose Dos Campos,573
+São Paulo,Sao Paulo,454
+São Paulo,Ubatuba,379
+São Paulo,Sao Jose Do Rio Preto,284
+São Paulo,Atibaia,243
+São Paulo,Taubate,242
+São Paulo,Embu Das Artes,239
+São Paulo,Mairipora,238
+São Paulo,Miracatu,233
+São Paulo,Cajati,217
+São Paulo,Jacarei,190
+São Paulo,Barra Do Turvo,186
+São Paulo,Itapecerica Da Serra,183
+São Paulo,Pindamonhangaba,153
+Tocantins,Araguaina,180
+Tocantins,Palmas,158
+Tocantins,Paraiso Do Tocantins,67
+Tocantins,Guarai,63
+Tocantins,Colinas Do Tocantins,41
+Tocantins,Cariri Do Tocantins,36
+Tocantins,Gurupi,35
+Tocantins,Wanderlandia,29
+Tocantins,Alianca Do Tocantins,28
+Tocantins,Fortaleza Do Tabocao,27
+Tocantins,Nova Olinda,27
+Tocantins,Porto Nacional,26
+Tocantins,Miranorte,25
+Tocantins,Alvorada,22
+Tocantins,Formoso Do Araguaia,17

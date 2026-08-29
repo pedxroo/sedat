@@ -1,0 +1,6 @@
+{
+  "name": "sedat-sus-dashboard",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Dashboard estático SEDAT-SUS, com login de admin via função serverless (api/admin-login.js) na Vercel."
+}

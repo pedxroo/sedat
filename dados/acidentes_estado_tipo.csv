@@ -1,0 +1,434 @@
+uf,tipo,acidentes
+Acre,Atropelamento de Animal,11
+Acre,Atropelamento de Pedestre,17
+Acre,Capotamento,5
+Acre,Colisão com objeto,13
+Acre,Colisão frontal,26
+Acre,Colisão lateral mesmo sentido,49
+Acre,Colisão lateral sentido oposto,14
+Acre,Colisão transversal,61
+Acre,Colisão traseira,99
+Acre,Derramamento de carga,1
+Acre,Engavetamento,7
+Acre,Incêndio,4
+Acre,Queda de ocupante de veículo,26
+Acre,Saída de leito carroçável,58
+Acre,Tombamento,29
+Alagoas,Atropelamento de Animal,35
+Alagoas,Atropelamento de Pedestre,49
+Alagoas,Capotamento,28
+Alagoas,Colisão com objeto,53
+Alagoas,Colisão frontal,95
+Alagoas,Colisão lateral mesmo sentido,51
+Alagoas,Colisão lateral sentido oposto,45
+Alagoas,Colisão transversal,145
+Alagoas,Colisão traseira,130
+Alagoas,Engavetamento,9
+Alagoas,Eventos atípicos,3
+Alagoas,Incêndio,33
+Alagoas,Queda de ocupante de veículo,46
+Alagoas,Saída de leito carroçável,119
+Alagoas,Tombamento,84
+Amazonas,Atropelamento de Animal,1
+Amazonas,Atropelamento de Pedestre,14
+Amazonas,Capotamento,7
+Amazonas,Colisão com objeto,16
+Amazonas,Colisão frontal,14
+Amazonas,Colisão lateral mesmo sentido,10
+Amazonas,Colisão lateral sentido oposto,9
+Amazonas,Colisão transversal,17
+Amazonas,Colisão traseira,31
+Amazonas,Engavetamento,1
+Amazonas,Eventos atípicos,2
+Amazonas,Incêndio,9
+Amazonas,Queda de ocupante de veículo,6
+Amazonas,Saída de leito carroçável,53
+Amazonas,Tombamento,21
+Amapá,Atropelamento de Animal,2
+Amapá,Atropelamento de Pedestre,8
+Amapá,Capotamento,7
+Amapá,Colisão com objeto,6
+Amapá,Colisão frontal,34
+Amapá,Colisão lateral mesmo sentido,22
+Amapá,Colisão lateral sentido oposto,6
+Amapá,Colisão transversal,46
+Amapá,Colisão traseira,39
+Amapá,Eventos atípicos,5
+Amapá,Incêndio,1
+Amapá,Queda de ocupante de veículo,9
+Amapá,Saída de leito carroçável,31
+Amapá,Tombamento,19
+Bahia,Atropelamento de Animal,114
+Bahia,Atropelamento de Pedestre,285
+Bahia,Capotamento,142
+Bahia,Colisão com objeto,207
+Bahia,Colisão frontal,701
+Bahia,Colisão lateral mesmo sentido,455
+Bahia,Colisão lateral sentido oposto,318
+Bahia,Colisão transversal,939
+Bahia,Colisão traseira,1027
+Bahia,Derramamento de carga,10
+Bahia,Engavetamento,121
+Bahia,Eventos atípicos,17
+Bahia,Incêndio,205
+Bahia,Queda de ocupante de veículo,337
+Bahia,Saída de leito carroçável,750
+Bahia,Tombamento,465
+Ceará,Atropelamento de Animal,54
+Ceará,Atropelamento de Pedestre,105
+Ceará,Capotamento,19
+Ceará,Colisão com objeto,108
+Ceará,Colisão frontal,159
+Ceará,Colisão lateral mesmo sentido,177
+Ceará,Colisão lateral sentido oposto,72
+Ceará,Colisão transversal,270
+Ceará,Colisão traseira,412
+Ceará,Derramamento de carga,2
+Ceará,Engavetamento,41
+Ceará,Eventos atípicos,14
+Ceará,Incêndio,24
+Ceará,Queda de ocupante de veículo,81
+Ceará,Saída de leito carroçável,154
+Ceará,Tombamento,128
+Distrito Federal,Atropelamento de Animal,12
+Distrito Federal,Atropelamento de Pedestre,68
+Distrito Federal,Capotamento,36
+Distrito Federal,Colisão com objeto,78
+Distrito Federal,Colisão frontal,23
+Distrito Federal,Colisão lateral mesmo sentido,299
+Distrito Federal,Colisão lateral sentido oposto,13
+Distrito Federal,Colisão transversal,135
+Distrito Federal,Colisão traseira,376
+Distrito Federal,Engavetamento,30
+Distrito Federal,Eventos atípicos,7
+Distrito Federal,Incêndio,14
+Distrito Federal,Queda de ocupante de veículo,89
+Distrito Federal,Saída de leito carroçável,238
+Distrito Federal,Sinistro pessoal de trânsito,1
+Distrito Federal,Tombamento,66
+Espírito Santo,Atropelamento de Animal,27
+Espírito Santo,Atropelamento de Pedestre,200
+Espírito Santo,Capotamento,42
+Espírito Santo,Colisão com objeto,255
+Espírito Santo,Colisão frontal,267
+Espírito Santo,Colisão lateral mesmo sentido,412
+Espírito Santo,Colisão lateral sentido oposto,136
+Espírito Santo,Colisão transversal,677
+Espírito Santo,Colisão traseira,667
+Espírito Santo,Derramamento de carga,3
+Espírito Santo,Engavetamento,53
+Espírito Santo,Eventos atípicos,12
+Espírito Santo,Incêndio,60
+Espírito Santo,Queda de ocupante de veículo,212
+Espírito Santo,Saída de leito carroçável,276
+Espírito Santo,Tombamento,414
+Goiás,Atropelamento de Animal,86
+Goiás,Atropelamento de Pedestre,187
+Goiás,Capotamento,105
+Goiás,Colisão com objeto,341
+Goiás,Colisão frontal,211
+Goiás,Colisão lateral mesmo sentido,365
+Goiás,Colisão lateral sentido oposto,103
+Goiás,Colisão transversal,446
+Goiás,Colisão traseira,1023
+Goiás,Derramamento de carga,10
+Goiás,Engavetamento,57
+Goiás,Eventos atípicos,23
+Goiás,Incêndio,148
+Goiás,Queda de ocupante de veículo,252
+Goiás,Saída de leito carroçável,1047
+Goiás,Tombamento,336
+Maranhão,Atropelamento de Animal,31
+Maranhão,Atropelamento de Pedestre,90
+Maranhão,Capotamento,32
+Maranhão,Colisão com objeto,50
+Maranhão,Colisão frontal,264
+Maranhão,Colisão lateral mesmo sentido,132
+Maranhão,Colisão lateral sentido oposto,87
+Maranhão,Colisão transversal,367
+Maranhão,Colisão traseira,347
+Maranhão,Derramamento de carga,3
+Maranhão,Engavetamento,29
+Maranhão,Eventos atípicos,8
+Maranhão,Incêndio,31
+Maranhão,Queda de ocupante de veículo,61
+Maranhão,Saída de leito carroçável,218
+Maranhão,Sinistro pessoal de trânsito,1
+Maranhão,Tombamento,118
+Minas Gerais,Atropelamento de Animal,179
+Minas Gerais,Atropelamento de Pedestre,541
+Minas Gerais,Capotamento,288
+Minas Gerais,Colisão com objeto,1143
+Minas Gerais,Colisão frontal,852
+Minas Gerais,Colisão lateral mesmo sentido,1238
+Minas Gerais,Colisão lateral sentido oposto,427
+Minas Gerais,Colisão transversal,1328
+Minas Gerais,Colisão traseira,2432
+Minas Gerais,Derramamento de carga,16
+Minas Gerais,Engavetamento,236
+Minas Gerais,Eventos atípicos,48
+Minas Gerais,Incêndio,416
+Minas Gerais,Queda de ocupante de veículo,459
+Minas Gerais,Saída de leito carroçável,2689
+Minas Gerais,Sinistro pessoal de trânsito,3
+Minas Gerais,Tombamento,1536
+Mato Grosso do Sul,Atropelamento de Animal,94
+Mato Grosso do Sul,Atropelamento de Pedestre,76
+Mato Grosso do Sul,Capotamento,30
+Mato Grosso do Sul,Colisão com objeto,174
+Mato Grosso do Sul,Colisão frontal,138
+Mato Grosso do Sul,Colisão lateral mesmo sentido,128
+Mato Grosso do Sul,Colisão lateral sentido oposto,135
+Mato Grosso do Sul,Colisão transversal,323
+Mato Grosso do Sul,Colisão traseira,323
+Mato Grosso do Sul,Derramamento de carga,7
+Mato Grosso do Sul,Engavetamento,27
+Mato Grosso do Sul,Eventos atípicos,31
+Mato Grosso do Sul,Incêndio,110
+Mato Grosso do Sul,Queda de ocupante de veículo,24
+Mato Grosso do Sul,Saída de leito carroçável,517
+Mato Grosso do Sul,Tombamento,281
+Mato Grosso,Atropelamento de Animal,94
+Mato Grosso,Atropelamento de Pedestre,70
+Mato Grosso,Capotamento,69
+Mato Grosso,Colisão com objeto,142
+Mato Grosso,Colisão frontal,270
+Mato Grosso,Colisão lateral mesmo sentido,277
+Mato Grosso,Colisão lateral sentido oposto,157
+Mato Grosso,Colisão transversal,478
+Mato Grosso,Colisão traseira,604
+Mato Grosso,Derramamento de carga,9
+Mato Grosso,Engavetamento,52
+Mato Grosso,Eventos atípicos,34
+Mato Grosso,Incêndio,123
+Mato Grosso,Queda de ocupante de veículo,272
+Mato Grosso,Saída de leito carroçável,967
+Mato Grosso,Tombamento,235
+Pará,Atropelamento de Animal,30
+Pará,Atropelamento de Pedestre,42
+Pará,Capotamento,21
+Pará,Colisão com objeto,73
+Pará,Colisão frontal,219
+Pará,Colisão lateral mesmo sentido,126
+Pará,Colisão lateral sentido oposto,108
+Pará,Colisão transversal,223
+Pará,Colisão traseira,275
+Pará,Derramamento de carga,6
+Pará,Engavetamento,17
+Pará,Eventos atípicos,12
+Pará,Incêndio,34
+Pará,Queda de ocupante de veículo,47
+Pará,Saída de leito carroçável,222
+Pará,Tombamento,174
+Paraíba,Atropelamento de Animal,89
+Paraíba,Atropelamento de Pedestre,121
+Paraíba,Capotamento,26
+Paraíba,Colisão com objeto,196
+Paraíba,Colisão frontal,135
+Paraíba,Colisão lateral mesmo sentido,314
+Paraíba,Colisão lateral sentido oposto,41
+Paraíba,Colisão transversal,279
+Paraíba,Colisão traseira,619
+Paraíba,Derramamento de carga,5
+Paraíba,Engavetamento,71
+Paraíba,Eventos atípicos,10
+Paraíba,Incêndio,40
+Paraíba,Queda de ocupante de veículo,138
+Paraíba,Saída de leito carroçável,332
+Paraíba,Tombamento,407
+Pernambuco,Atropelamento de Animal,131
+Pernambuco,Atropelamento de Pedestre,306
+Pernambuco,Capotamento,86
+Pernambuco,Colisão com objeto,204
+Pernambuco,Colisão frontal,352
+Pernambuco,Colisão lateral mesmo sentido,618
+Pernambuco,Colisão lateral sentido oposto,111
+Pernambuco,Colisão transversal,511
+Pernambuco,Colisão traseira,1094
+Pernambuco,Derramamento de carga,5
+Pernambuco,Engavetamento,75
+Pernambuco,Eventos atípicos,16
+Pernambuco,Incêndio,103
+Pernambuco,Queda de ocupante de veículo,206
+Pernambuco,Saída de leito carroçável,430
+Pernambuco,Sinistro pessoal de trânsito,1
+Pernambuco,Tombamento,292
+Piauí,Atropelamento de Animal,69
+Piauí,Atropelamento de Pedestre,99
+Piauí,Capotamento,23
+Piauí,Colisão com objeto,146
+Piauí,Colisão frontal,156
+Piauí,Colisão lateral mesmo sentido,221
+Piauí,Colisão lateral sentido oposto,72
+Piauí,Colisão transversal,448
+Piauí,Colisão traseira,426
+Piauí,Derramamento de carga,5
+Piauí,Engavetamento,13
+Piauí,Eventos atípicos,9
+Piauí,Incêndio,29
+Piauí,Queda de ocupante de veículo,42
+Piauí,Saída de leito carroçável,210
+Piauí,Tombamento,170
+Paraná,Atropelamento de Animal,63
+Paraná,Atropelamento de Pedestre,437
+Paraná,Capotamento,222
+Paraná,Colisão com objeto,821
+Paraná,Colisão frontal,665
+Paraná,Colisão lateral mesmo sentido,1234
+Paraná,Colisão lateral sentido oposto,279
+Paraná,Colisão transversal,1382
+Paraná,Colisão traseira,2259
+Paraná,Derramamento de carga,13
+Paraná,Engavetamento,211
+Paraná,Eventos atípicos,22
+Paraná,Incêndio,244
+Paraná,Queda de ocupante de veículo,395
+Paraná,Saída de leito carroçável,2140
+Paraná,Tombamento,902
+Rio de Janeiro,Atropelamento de Animal,120
+Rio de Janeiro,Atropelamento de Pedestre,521
+Rio de Janeiro,Capotamento,177
+Rio de Janeiro,Colisão com objeto,725
+Rio de Janeiro,Colisão frontal,467
+Rio de Janeiro,Colisão lateral mesmo sentido,1218
+Rio de Janeiro,Colisão lateral sentido oposto,180
+Rio de Janeiro,Colisão transversal,951
+Rio de Janeiro,Colisão traseira,2094
+Rio de Janeiro,Derramamento de carga,9
+Rio de Janeiro,Engavetamento,202
+Rio de Janeiro,Eventos atípicos,30
+Rio de Janeiro,Incêndio,284
+Rio de Janeiro,Queda de ocupante de veículo,969
+Rio de Janeiro,Saída de leito carroçável,643
+Rio de Janeiro,Sinistro pessoal de trânsito,1
+Rio de Janeiro,Tombamento,813
+Rio Grande do Norte,Atropelamento de Animal,94
+Rio Grande do Norte,Atropelamento de Pedestre,104
+Rio Grande do Norte,Capotamento,29
+Rio Grande do Norte,Colisão com objeto,145
+Rio Grande do Norte,Colisão frontal,120
+Rio Grande do Norte,Colisão lateral mesmo sentido,282
+Rio Grande do Norte,Colisão lateral sentido oposto,57
+Rio Grande do Norte,Colisão transversal,379
+Rio Grande do Norte,Colisão traseira,588
+Rio Grande do Norte,Derramamento de carga,1
+Rio Grande do Norte,Engavetamento,42
+Rio Grande do Norte,Eventos atípicos,10
+Rio Grande do Norte,Incêndio,37
+Rio Grande do Norte,Queda de ocupante de veículo,129
+Rio Grande do Norte,Saída de leito carroçável,158
+Rio Grande do Norte,Tombamento,133
+Rondônia,Atropelamento de Animal,51
+Rondônia,Atropelamento de Pedestre,55
+Rondônia,Capotamento,28
+Rondônia,Colisão com objeto,94
+Rondônia,Colisão frontal,135
+Rondônia,Colisão lateral mesmo sentido,301
+Rondônia,Colisão lateral sentido oposto,101
+Rondônia,Colisão transversal,456
+Rondônia,Colisão traseira,469
+Rondônia,Derramamento de carga,2
+Rondônia,Engavetamento,27
+Rondônia,Eventos atípicos,14
+Rondônia,Incêndio,31
+Rondônia,Queda de ocupante de veículo,101
+Rondônia,Saída de leito carroçável,284
+Rondônia,Tombamento,171
+Roraima,Atropelamento de Animal,11
+Roraima,Atropelamento de Pedestre,11
+Roraima,Capotamento,2
+Roraima,Colisão com objeto,11
+Roraima,Colisão frontal,22
+Roraima,Colisão lateral mesmo sentido,8
+Roraima,Colisão lateral sentido oposto,14
+Roraima,Colisão transversal,18
+Roraima,Colisão traseira,25
+Roraima,Engavetamento,1
+Roraima,Eventos atípicos,1
+Roraima,Incêndio,9
+Roraima,Queda de ocupante de veículo,8
+Roraima,Saída de leito carroçável,38
+Roraima,Tombamento,15
+Rio Grande do Sul,Atropelamento de Animal,89
+Rio Grande do Sul,Atropelamento de Pedestre,225
+Rio Grande do Sul,Capotamento,99
+Rio Grande do Sul,Colisão com objeto,578
+Rio Grande do Sul,Colisão frontal,510
+Rio Grande do Sul,Colisão lateral mesmo sentido,684
+Rio Grande do Sul,Colisão lateral sentido oposto,228
+Rio Grande do Sul,Colisão transversal,1262
+Rio Grande do Sul,Colisão traseira,1152
+Rio Grande do Sul,Derramamento de carga,11
+Rio Grande do Sul,Engavetamento,91
+Rio Grande do Sul,Eventos atípicos,16
+Rio Grande do Sul,Incêndio,162
+Rio Grande do Sul,Queda de ocupante de veículo,172
+Rio Grande do Sul,Saída de leito carroçável,1301
+Rio Grande do Sul,Sinistro pessoal de trânsito,1
+Rio Grande do Sul,Tombamento,498
+Santa Catarina,Atropelamento de Animal,53
+Santa Catarina,Atropelamento de Pedestre,375
+Santa Catarina,Capotamento,196
+Santa Catarina,Colisão com objeto,980
+Santa Catarina,Colisão frontal,776
+Santa Catarina,Colisão lateral mesmo sentido,1768
+Santa Catarina,Colisão lateral sentido oposto,328
+Santa Catarina,Colisão transversal,1888
+Santa Catarina,Colisão traseira,2473
+Santa Catarina,Derramamento de carga,17
+Santa Catarina,Engavetamento,193
+Santa Catarina,Eventos atípicos,21
+Santa Catarina,Incêndio,177
+Santa Catarina,Queda de ocupante de veículo,404
+Santa Catarina,Saída de leito carroçável,1406
+Santa Catarina,Tombamento,1091
+Sergipe,Atropelamento de Animal,20
+Sergipe,Atropelamento de Pedestre,40
+Sergipe,Capotamento,13
+Sergipe,Colisão com objeto,80
+Sergipe,Colisão frontal,57
+Sergipe,Colisão lateral mesmo sentido,56
+Sergipe,Colisão lateral sentido oposto,17
+Sergipe,Colisão transversal,118
+Sergipe,Colisão traseira,167
+Sergipe,Derramamento de carga,3
+Sergipe,Engavetamento,7
+Sergipe,Eventos atípicos,7
+Sergipe,Incêndio,23
+Sergipe,Queda de ocupante de veículo,82
+Sergipe,Saída de leito carroçável,99
+Sergipe,Tombamento,65
+São Paulo,Atropelamento de Animal,49
+São Paulo,Atropelamento de Pedestre,343
+São Paulo,Capotamento,161
+São Paulo,Colisão com objeto,719
+São Paulo,Colisão frontal,121
+São Paulo,Colisão lateral mesmo sentido,1070
+São Paulo,Colisão lateral sentido oposto,51
+São Paulo,Colisão transversal,323
+São Paulo,Colisão traseira,1754
+São Paulo,Derramamento de carga,9
+São Paulo,Engavetamento,219
+São Paulo,Eventos atípicos,36
+São Paulo,Incêndio,202
+São Paulo,Queda de ocupante de veículo,444
+São Paulo,Saída de leito carroçável,506
+São Paulo,Sinistro pessoal de trânsito,2
+São Paulo,Tombamento,719
+Tocantins,Atropelamento de Animal,23
+Tocantins,Atropelamento de Pedestre,38
+Tocantins,Capotamento,17
+Tocantins,Colisão com objeto,40
+Tocantins,Colisão frontal,112
+Tocantins,Colisão lateral mesmo sentido,66
+Tocantins,Colisão lateral sentido oposto,55
+Tocantins,Colisão transversal,151
+Tocantins,Colisão traseira,197
+Tocantins,Derramamento de carga,3
+Tocantins,Engavetamento,5
+Tocantins,Eventos atípicos,10
+Tocantins,Incêndio,27
+Tocantins,Queda de ocupante de veículo,57
+Tocantins,Saída de leito carroçável,150
+Tocantins,Sinistro pessoal de trânsito,1
+Tocantins,Tombamento,83
