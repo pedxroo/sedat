@@ -152,6 +152,7 @@
   .filters-bar{display:flex;gap:10px;flex-wrap:wrap;}
 
   .map-wrap{position:relative;}
+  .chart-fill{position:relative;height:300px;}
   .brmap{width:100%;height:auto;}
   .map-zoom{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:6px;}
   .map-zoom button{width:28px;height:28px;border-radius:8px;border:1px solid var(--gray-200);background:#fff;cursor:pointer;font-weight:700;box-shadow:var(--shadow);}
@@ -328,7 +329,7 @@
             <div><h3>Evolução dos Acidentes</h3><p>Série histórica mensal</p></div>
             <select class="card-select" id="selectEvolucaoEstado"><option value="">Todos os Estados</option></select>
           </div>
-          <canvas id="chartEvolucao" height="90"></canvas>
+          <div class="chart-fill"><canvas id="chartEvolucao"></canvas></div>
         </div>
         <div class="card">
           <div class="card-head">
@@ -1099,6 +1100,7 @@ function renderChartEvolucao(){
     labels: base.map(x=>x.mes),
     datasets:[{label:'Acidentes', data:valores, borderColor:'#2f6fed', backgroundColor:'rgba(47,111,237,.08)', fill:true, tension:.35, pointRadius:3, pointHoverRadius:6, pointBackgroundColor:'#2f6fed'}]
   }, {
+    maintainAspectRatio: false,
     plugins:{
       legend:{display:true, position:'top', align:'start', labels:{boxWidth:10}},
       tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed.y)} acidentes`}}
