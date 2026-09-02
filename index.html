@@ -1787,6 +1787,10 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
+    // Gráficos criados enquanto a aba estava oculta (display:none) ficam com o
+    // tamanho travado, porque o Chart.js mediu o card com largura zero na hora
+    // da criação. Forçar um resize ao abrir a aba corrige isso.
+    Object.values(charts).forEach(c => c.resize());
   });
 });
 
