@@ -624,11 +624,12 @@
 
       <div class="card insight-card" style="margin-bottom:16px;padding:12px 16px;">
         <div style="font-size:12px;color:#2c4a3c;line-height:1.4;">ℹ️ Não há, nos dados públicos coletados para este projeto, uma fonte de capacidade
-        instalada (leitos/ambulâncias/unidades de saúde) por estado — isso exigiria o CNES
-        (Cadastro Nacional de Estabelecimentos de Saúde) do DATASUS. Os números abaixo são
-        só o lado da <b>demanda</b>: a mesma estimativa usada no resto do dashboard (leitos
-        ≈ feridos graves; atendimentos ≈ feridos leves + graves + óbitos), quebrada por
-        estado.</div>
+        de <b>leitos</b> ou <b>ambulâncias</b> por estado. Os KPIs e o ranking de "Leitos" e
+        "Atendimentos" abaixo são só o lado da <b>demanda</b>: a mesma estimativa usada no
+        resto do dashboard (leitos ≈ feridos graves; atendimentos ≈ feridos leves + graves +
+        óbitos), quebrada por estado. Já o número de <b>unidades de saúde</b> por estado, mais
+        abaixo, é dado real de capacidade instalada, do CNES (Cadastro Nacional de
+        Estabelecimentos de Saúde) do Ministério da Saúde.</div>
       </div>
 
       <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
@@ -664,6 +665,20 @@
           <table>
             <thead><tr><th>#</th><th>Estado</th><th style="text-align:right">Leitos</th><th style="text-align:right">/100k</th></tr></thead>
             <tbody id="recursosBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-head"><div><h3>Unidades de Saúde por Estado (CNES)</h3><p>Top 10 — capacidade instalada, dado real do Ministério da Saúde</p></div></div>
+          <canvas id="chartRecursosCnes" height="110"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Ranking de Unidades de Saúde (CNES)</h3><p>Total de estabelecimentos cadastrados por estado</p></div></div>
+          <table>
+            <thead><tr><th>#</th><th>Estado</th><th style="text-align:right">Unidades</th></tr></thead>
+            <tbody id="recursosCnesBody"></tbody>
           </table>
         </div>
       </div>
@@ -852,6 +867,10 @@ const DEFAULTS = {
     {uf:'Paraná',leitos_estim:2674,atendimentos_estim:12958,obitos:819},
     {uf:'Bahia',leitos_estim:1925,atendimentos_estim:8100,obitos:833},
   ],
+  cnes_estabelecimentos_estado: [
+    {uf:'São Paulo',total_estabelecimentos:153435},{uf:'Minas Gerais',total_estabelecimentos:78252},
+    {uf:'Rio de Janeiro',total_estabelecimentos:58205},{uf:'Bahia',total_estabelecimentos:29896},
+  ],
   acidentes_mensal_estado: [
     {uf:'São Paulo',mes:'Jan/25',acidentes:420},{uf:'São Paulo',mes:'Fev/25',acidentes:410},
     {uf:'Minas Gerais',mes:'Jan/25',acidentes:780},{uf:'Minas Gerais',mes:'Fev/25',acidentes:760},
@@ -944,6 +963,7 @@ function normalizeDataset(name, rows){
     causas_acidente:['percentual'], condicao_metereologica:['percentual'], gravidade_acidente:['percentual'],
     mortos_feridos_mensal:['mortos','feridos_graves','feridos_leves'], kpis_analises:['valor'],
     recursos_estado:['leitos_estim','atendimentos_estim','obitos'],
+    cnes_estabelecimentos_estado:['total_estabelecimentos'],
     acidentes_mensal_estado:['acidentes'],
     acidentes_estado_tipo:['acidentes'], municipios_estado:['acidentes'],
     serie_mensal_estado:['acidentes','leitos_estim','atendimentos_estim','obitos'],
@@ -1306,6 +1326,22 @@ function renderAll(){
       <div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
       <span style="min-width:44px;text-align:right;display:inline-block;">${fmt(r.leitos_estim)}</span></div>
     </td><td style="text-align:right;">${taxa}</td></tr>`;
+  }).join('');
+
+  // Unidades de saúde por estado (CNES) — dado real de capacidade instalada
+  const cnesOrdenado = [...(d.cnes_estabelecimentos_estado||[])].sort((a,b)=>(b.total_estabelecimentos||0)-(a.total_estabelecimentos||0));
+  upsertChart('chartRecursosCnes', 'bar', {
+    labels: cnesOrdenado.slice(0,10).map(x=>x.uf),
+    datasets:[{data:cnesOrdenado.slice(0,10).map(x=>x.total_estabelecimentos), backgroundColor:'#2f6fed', borderRadius:5}]
+  }, {plugins:{legend:{display:false}}, scales:{x:{ticks:{font:{size:9.5}}}}});
+
+  const maxCnes = Math.max(...cnesOrdenado.map(r=>r.total_estabelecimentos||0), 1);
+  document.getElementById('recursosCnesBody').innerHTML = cnesOrdenado.slice(0,10).map((r,i)=>{
+    const pct = ((r.total_estabelecimentos||0)/maxCnes*100).toFixed(0);
+    return `<tr><td>${i+1}</td><td>${r.uf}</td><td>
+      <div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <span style="min-width:44px;text-align:right;display:inline-block;">${fmt(r.total_estabelecimentos)}</span></div>
+    </td></tr>`;
   }).join('');
 
   const mortosFeridosPeriodo = filtraPorPeriodo(d.mortos_feridos_mensal, 'mes');

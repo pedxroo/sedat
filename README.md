@@ -1,3 +1,64 @@
+## Oracle — os três padrões de fonte de dados
+
+O projeto cobre os três padrões de fonte de dados pedidos no desafio usando um banco
+Oracle (schema `sedat_app`), além dos CSVs locais que o dashboard já lê:
+
+| Padrão | Como | Arquivo |
+|---|---|---|
+| **Tabela relacional** | Dado processado da PRF/SIH, carregado via `INSERT` | [`oracle/schema.sql`](oracle/schema.sql) |
+| **CSV como External Table** | `populacao_uf` e `clima_mensal_2025` lidas ao vivo, sem `INSERT`, direto do repositório público no GitHub (`raw.githubusercontent.com`) via `DBMS_CLOUD.CREATE_EXTERNAL_TABLE` | [`oracle/external_table.sql`](oracle/external_table.sql) |
+| **JSON via API** | Total de unidades de saúde por UF, agregado do dump público do CNES (Ministério da Saúde) e guardado numa coluna JSON nativa, consultada com `JSON_TABLE`/`JSON_VALUE` | [`oracle/cnes_json.sql`](oracle/cnes_json.sql) |
+
+**Por que "unidades de saúde" e não "leitos" no padrão JSON**: o dump de
+Estabelecimentos do CNES (o único dos dados do CNES disponível em JSON) não traz
+contagem de leitos — isso fica numa tabela CNES separada, só em CSV. Confirmado
+inspecionando uma amostra real do arquivo antes de escrever o código. O que o dump
+tem, de forma confiável, é um registro por unidade de saúde com UF e esfera
+administrativa — agregado por estado, isso alimenta a métrica "Unidades de Saúde"
+na aba Recursos, que antes não tinha fonte de dado nenhuma.
+
+### Por que gerar SQL em vez de conectar direto no banco
+
+O ambiente usado para rodar isso é o **FreeSQL** (`sql.oraclecloud.com`) — um
+worksheet Oracle só no navegador, sem conexão externa liberada (nada de
+Python/`oracledb`, JDBC etc. de fora). Por isso a carga de dados não é feita por
+scripts que se conectam no banco: os dois geradores abaixo só leem arquivos locais
+(CSV local, ou o dump público do CNES) e escrevem um `.sql` pronto pra colar no
+worksheet.
+
+```bash
+cd dados_reais
+python gerar_sql_relacional.py   # -> oracle/carga_dados.sql (padrão relacional)
+python gerar_sql_cnes.py         # -> oracle/carga_cnes.sql (padrão JSON via API;
+                                  #    baixa ~67 MB do CNES, streaming, sem carregar
+                                  #    tudo em memória)
+```
+
+### Ordem para montar o schema (uma vez, no FreeSQL ou num Autonomous Database)
+
+1. `oracle/schema.sql` (como ADMIN) — cria o usuário `sedat_app` e as tabelas do
+   padrão relacional.
+2. `oracle/external_table.sql` (como `sedat_app`) — cria as External Tables lidas
+   do GitHub. **Tem um teste de compatibilidade no topo do arquivo** — rode primeiro,
+   porque nem todo ambiente Oracle libera `DBMS_CLOUD` (se não liberar, o próprio
+   arquivo tem um fallback documentado para tabela comum).
+3. `oracle/cnes_json.sql` (como `sedat_app`) — cria a tabela JSON e a view do CNES.
+4. `oracle/carga_dados.sql` e `oracle/carga_cnes.sql` (gerados pelos scripts acima)
+   — cole e rode no worksheet para popular tudo.
+
+Se algum dia migrar para um Autonomous Database completo (conta OCI, não o
+FreeSQL), os scripts em Python passam a poder conectar direto (`python-oracledb`)
+em vez de gerar SQL — mas isso não é necessário para o desafio funcionar.
+
+**Select AI ficou fora do escopo por enquanto** — a integração de linguagem natural
+depende de configurar IAM (Dynamic Group + Policy) e o OCI Generative AI, que exige
+uma conta OCI completa (não funciona no FreeSQL) e não é essencial para o desafio (o
+próprio enunciado trata o Select AI como diferencial, não requisito central). O
+código já escrito para isso (`oracle/select_ai_setup.sql`, `api/select-ai.js`) ficou
+no repositório como referência caso valha a pena retomar depois, mas não está
+conectado ao dashboard — a aba "Select IA" continua usando só o motor de regras
+local (`answerSelectIa()` em `index.html`), como antes.
+
 ## Publicação (GitHub + Vercel) e modo admin
 
 Os botões que atualizam os dados exibidos — **"Selecionar pasta de dados"**,
@@ -114,6 +175,7 @@ rótulo de período no topo — nada precisa ser editado manualmente no `index.h
 | `mortos_feridos_mensal.csv` | Análises → Evolução de Mortos e Feridos Graves | `mes, mortos, feridos_graves, feridos_leves` |
 | `kpis_analises.csv` | Análises → cartões de indicadores | `indicador, valor` (indicadores esperados: `Taxa de Letalidade`, `Pct Acidentes Fatais`, `Media Pessoas por Acidente`, `Media Veiculos por Acidente`) |
 | `recursos_estado.csv` | Recursos → ranking e gráfico por estado | `uf, leitos_estim, atendimentos_estim, obitos` |
+| `cnes_estabelecimentos_estado.csv` | Recursos → ranking e gráfico de Unidades de Saúde (CNES) | `uf, total_estabelecimentos` — gerado por `dados_reais/gerar_sql_cnes.py`, dado real (não estimativa) |
 | `acidentes_mensal_estado.csv` | Overview → filtro de Estado no gráfico Evolução | `uf, mes, acidentes` |
 | `acidentes_estado_tipo.csv` | Geográfico → filtro de Tipo de Acidente | `uf, tipo, acidentes` |
 | `municipios_estado.csv` | Geográfico → filtro de Município em cascata (Top 15 por UF) | `uf, municipio, acidentes` |
